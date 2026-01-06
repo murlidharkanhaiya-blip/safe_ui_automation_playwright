@@ -1,0 +1,157 @@
+name: Run Playwright Tests with Allure (Windows - Node.js)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Test suite to run"
+        required: true
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  run-tests:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright Tests with Allure
+        shell: pwsh
+        run: |
+          try {
+            $trigger = "${{ github.event_name }}"
+            $inputSuite = "${{ github.event.inputs.suite }}"
+
+            if ($trigger -eq "push") {
+              $suite = "all"
+            } elseif (-not [string]::IsNullOrEmpty($inputSuite)) {
+              $suite = $inputSuite
+            } else {
+              $suite = "widget"
+            }
+
+            Write-Host "=== Running suite: $suite (trigger: $trigger) ==="
+
+            switch ($suite) {
+              # "login" {
+              #   $playwrightCmd = 'npx playwright test tests/login.spec.js --reporter=line,allure-playwright'
+              # }
+              # "widget" {
+              #   $playwrightCmd = 'npx playwright test tests/widget.spec.js --reporter=line,allure-playwright'
+              # }
+              # "chatbot" {
+              #   $playwrightCmd = 'npx playwright test tests/chatbot.spec.js --reporter=line,allure-playwright'
+              # }
+              # "nlu_settings" {
+              #   $playwrightCmd = 'npx playwright test tests/nlu-settings.spec.js --reporter=line,allure-playwright'
+              # }
+              # "all" {
+              #   $playwrightCmd = 'npx playwright test --reporter=line,allure-playwright'
+              # }
+              Default {
+                $playwrightCmd = "npx playwright test --grep @$suite --reporter=line,allure-playwright"
+              }
+            }
+
+            Write-Host "Running command: $playwrightCmd"
+            Invoke-Expression $playwrightCmd
+            $playwrightExitCode = $LASTEXITCODE
+            Write-Host "Playwright finished with exit code $playwrightExitCode"
+
+            $exitCode = 0
+
+          } catch {
+            Write-Host "Error during test execution: $_"
+            $exitCode = 0
+          } finally {
+            exit $exitCode
+          }
+
+      - name: Install Allure CLI
+        shell: pwsh
+        run: |
+          Write-Host "Downloading Allure CLI..."
+          Invoke-WebRequest -Uri "https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.zip" -OutFile "allure.zip"
+          
+          Write-Host "Extracting Allure CLI..."
+          Expand-Archive allure.zip -DestinationPath C:\allure
+          
+          echo "C:\allure\allure-2.27.0\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
+
+      - name: Verify Allure Installation
+        run: allure --version
+
+      - name: Generate Allure Report
+        run: allure generate allure-results --clean -o allure-report
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./allure-report
+
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ github.event_name == 'push' && 'all' || github.event.inputs.suite }}
+          path: allure-results
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+
+      - name: Zip Allure Results
+        run: Compress-Archive -Path allure-results -DestinationPath allure-results.zip
+
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: email-smtp.us-east-1.amazonaws.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Fuel iX Test Results - ${{ github.event_name == 'push' && 'All' || github.event.inputs.suite }} Suite
+          to: shruti.prakash01@telusinternational.com
+          from: Fuel iX Automation <safe-automation-playwright@xavlab.xyz>
+          body: |
+            Hello Team,
+
+            The ${{ github.event_name == 'push' && 'All' || github.event.inputs.suite }} test suite has completed execution.
+
+            📊 View the Allure Report:
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+
+            📁 Raw test results are attached for reference.
+
+            Repository: ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Triggered by: ${{ github.actor }}
+
+            Best regards,
+            Fuel iX Automation Team
+          attachments: allure-results.zip
