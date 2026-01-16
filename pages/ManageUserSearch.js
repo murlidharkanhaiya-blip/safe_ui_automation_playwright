@@ -5,7 +5,7 @@ class ManageUserSearch {
         this.page = page;
 
         // Locators
-        this.ManageuserNavViewLocator = "(//*[name()='svg'])[13]";
+        this.ManageuserNavViewLocator = "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Manage Users']//a[@data-testid='nav-link']";
         this.searchInput = "(//input[contains(@placeholder,'Search')])[2]";
         this.searchButton = "//div[@class='page-heading-actions']//div[@class='search-wrapper']//img[@alt='search']";
 
@@ -19,17 +19,19 @@ class ManageUserSearch {
         await this.page.waitForLoadState('networkidle');
 
         // Navigate to Manage Users page
-        await this.page.locator(this.ManageuserNavViewLocator).click();
+        const manageusernav = this.page.locator(this.ManageuserNavViewLocator);
+      await manageusernav.waitFor({ state: 'visible', timeout: 10000 });
+      await manageusernav.click();
 
         // Wait for loader if visible
         const loader = this.page.locator('#global-loader-container >> .loading');
         if (await loader.isVisible().catch(() => false)) {
-            await loader.waitFor({ state: 'hidden', timeout: 10000 });
+            await loader.waitFor({ state: 'hidden', timeout: 5000 });
         }
 
         // Wait for table to load
         const rows = this.page.locator(this.tableRow);
-        await rows.first().waitFor({ timeout: 10000 });
+        await rows.first().waitFor({ timeout: 5000 });
 
         const count = await rows.count();
         if (count === 0) {
@@ -59,7 +61,7 @@ class ManageUserSearch {
             await trigger.click();
 
             const option = this.page.locator(`.search__option--item:has-text("${criteriaText}")`);
-            await option.waitFor({ state: 'visible', timeout: 5000 });
+            await option.waitFor({ state: 'visible', timeout: 3000 });
             await option.click();
 
             await this.page.waitForTimeout(300);
@@ -79,9 +81,9 @@ class ManageUserSearch {
             const resultRow = resultRows.first();
 
             try {
-                await resultRow.waitFor({ state: 'visible', timeout: 5000 });
+                await resultRow.waitFor({ state: 'visible', timeout: 3000 });
                 const resultCell = resultRow.locator(cellSelector);
-                await resultCell.waitFor({ state: 'visible', timeout: 5000 });
+                await resultCell.waitFor({ state: 'visible', timeout: 3000 });
 
                 const resultText = (await resultCell.innerText()).trim();
                 expect(resultText).toContain(inputValue);

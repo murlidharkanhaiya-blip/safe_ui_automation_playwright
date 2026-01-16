@@ -5,7 +5,7 @@ class BatchSchedulingSearch {
         this.page = page;
 
         // Locators
-        this.BatchschedulingNavViewLocator = "(//*[name()='svg'])[16]";
+         this.batchschedulingnavbar = "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Batch Scheduling']//a[@data-testid='nav-link']";
         this.searchInput = "(//input[contains(@placeholder,'Search')])[2]";
         this.searchButton = "//div[@class='page-heading-actions']//div[@class='search-wrapper']//img[@alt='search']";
 
@@ -17,8 +17,11 @@ class BatchSchedulingSearch {
     async verifySearchOnbatchschedulingPage() {
         await this.page.waitForLoadState('networkidle');
 
-        // Navigate to Batch scheduling page
-        await this.page.locator(this.BatchschedulingNavViewLocator).click();
+        // batch scheduling nav view click
+         /* Step 1: Click batch scheduling (sidebar only) */
+   const batchschedulingnav = this.page.locator(this.batchschedulingnavbar);
+  await batchschedulingnav.waitFor({ state: 'visible', timeout: 15000 });
+  await batchschedulingnav.click();
 
         // Wait for loader if visible
         const loader = this.page.locator('#global-loader-container >> .loading');

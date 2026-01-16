@@ -1,70 +1,90 @@
+const { expect } = require('@playwright/test');
+
 class ExportReportIndiExcusedVideo {
-    constructor(page) {
-        this.page = page;
+  constructor(page) {
+    this.page = page;
 
-        // Locators
-      this.excusedEntityCard = this.page.locator("div.block-container.deleted-images-block").filter({ hasText: "Excused Entities" });
-      this.videotab = this.page.locator("(//div[@class='videos failed-captures btn btn-outline-success '])[1]");
-      this.actionicon=this.page.locator("(//img[@title='View'])[1]");
-        this.exporticon = "(//button[@data-testid='export-report'])[1]";
-        this.csvbutton = "(//a[normalize-space()='CSV'])[1]";
-        this.successToast = "//div[contains(text(),'Report has been sent to your email.')]";
+   this.excusedentityCard = page.locator('.dashboard-box:has-text("Excused Entities")');
+   this.loader = page.locator('#global-loader-container');  
+
+   // Optional overlay locator
+        this.overlay = this.page.locator("//div[contains(@class,'overlay')]");
+
+    /* Tabs */
+    this.videotab = page.locator(
+      "//div[contains(@class,'videos') and contains(@class,'failed-captures')]"
+    );
+
+    /* Action + Export */
+    this.actionicon = page.locator("//img[@title='View']").first();
+    this.exporticon = page.locator("//button[@data-testid='export-report']").first();
+    this.csvbutton = page.locator("//a[normalize-space()='CSV']");
+
+    /* Toast */
+    this.successToast = page.locator(
+      "//div[contains(text(),'Report has been sent to your email')]"
+    );
+  }
+
+  /* ------------------ UTILS ------------------ */
+
+  async waitForLoader() {
+    if (await this.loader.isVisible().catch(() => false)) {
+      await this.loader.waitFor({ state: 'hidden', timeout: 30000 });
     }
+  }
 
-    async waitForExcusedEntitiesToLoad() {
-        await this.excusedEntityCard.waitFor({ state: 'visible', timeout: 20000 });
+  async waitForDashboardReady() {
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.waitForLoader();
+  }
 
-        const cardHandle = await this.excusedEntityCard.elementHandle();
+  /* ------------------ MAIN FLOW ------------------ */
 
-        await this.page.waitForFunction(
-            (el) => {
-                const text = el?.innerText?.trim() || '';
-                const match = text.match(/Excused Entities\s*(\d+)/);
-                return match && parseInt(match[1], 10) > 0;
-            },
-            cardHandle,
-            { timeout: 20000 }
-        );
-    }
+  async verifyexportreportonexcusedindivideopage() {
+    // Step 1: Navigate to excused entity
+        await this.excusedentityCard.waitFor({ state: 'visible', timeout: 30000 });
+        await this.excusedentityCard.click();
+         await this.waitForLoader();
 
-    async verifyexportreportonexcusedindivideopage() {
-        await this.page.waitForLoadState('networkidle');
+    /* Step 2: Confirm navigation + click Video tab */
 
-        // Step 1:✅ Select card excused image card 
-       await this.page.waitForLoadState('domcontentloaded');
-        await this.page.waitForTimeout(1000);
+// Wait for tabs container
+await this.page.waitForSelector(
+  "//div[contains(@class,'btn') or contains(@class,'tab')]",
+  { timeout: 30000 }
+);
 
-        await this.waitForExcusedEntitiesToLoad();
-        await this.excusedEntityCard.scrollIntoViewIfNeeded();
-        await this.excusedEntityCard.waitFor({ state: 'visible', timeout: 5000 });
-        await this.excusedEntityCard.click();
-        // Step 2 click on excused video tab.
-        await this.videotab.waitFor({ state: 'visible', timeout: 5000 });
-        await this.videotab.click();
-        
+// Click Video tab by text (most stable)
+this.videotab = this.page.getByText(/video/i, { exact: false });
 
+await expect(this.videotab.first()).toBeVisible({ timeout: 20000 });
+await this.videotab.first().click();
 
-        // Step 3 click on action icon 
-        await this.actionicon.waitFor({ state: 'visible', timeout: 5000 });
-        await this.actionicon.click();
+await this.waitForLoader();
 
-       
+    /* Step 3: Click Action icon */
+    await this.actionicon.waitFor({ state: 'visible', timeout: 20000 });
+    await this.actionicon.click();
 
-        
+    /* Step 4: Export → CSV */
+    await this.exporticon.waitFor({ state: 'visible', timeout: 15000 });
+    await this.exporticon.click();
 
-        // Step 4: Click  action icon and Export > CSV
-        
-        await this.page.locator(this.exporticon).click();
-        await this.page.locator(this.csvbutton).click();
+    await this.csvbutton.waitFor({ state: 'visible', timeout: 15000 });
+    await this.csvbutton.click();
 
-        // Step 5: Wait for success toast
-        const toast = this.page.locator(this.successToast);
-        await toast.waitFor({ state: 'visible', timeout: 15000 });
+    /* Step 5: Validate success toast */
+    await this.successToast.waitFor({ state: 'visible', timeout: 20000 });
 
-        // Step 6: Screenshot
-        await this.page.screenshot({ path: 'export_success_toast.png', fullPage: true });
-        console.log("✅ Export success message appeared and screenshot taken.");
-    }
+    /* Step 6: Screenshot */
+    await this.page.screenshot({
+      path: 'export_success_toast.png',
+      fullPage: true,
+    });
+
+    console.log('✅ Export success message appeared and screenshot taken.');
+  }
 }
 
 module.exports = { ExportReportIndiExcusedVideo };

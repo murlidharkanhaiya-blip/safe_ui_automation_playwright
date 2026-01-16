@@ -4,7 +4,7 @@ class DeleteBatchSchedulingJob {
     constructor(page) {
         this.page = page;
 
-        this.batchschedulingnavbar = this.page.locator("(//*[name()='svg'])[16]");
+        this.batchschedulingnavbar = "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Batch Scheduling']//a[@data-testid='nav-link']";
        this.deletebatchschdulinhg = this.page.locator("(//img[@title='Delete Schedule'])[1]");
         this.deleteconfirmation=this.page.locator("(//button[normalize-space()='CONFIRM'])[1]");
 
@@ -13,8 +13,11 @@ class DeleteBatchSchedulingJob {
     }
 
     async DeleteBatchschedulejob() {
-        await this.batchschedulingnavbar.click();
-        await this.page.waitForTimeout(2000);
+        // batch scheduling nav view click
+         /* Step 1: Click batch scheduling (sidebar only) */
+   const batchschedulingnav = this.page.locator(this.batchschedulingnavbar);
+  await batchschedulingnav.waitFor({ state: 'visible', timeout: 15000 });
+  await batchschedulingnav.click();
 
         await this.deletebatchschdulinhg.click();
         await this.page.waitForTimeout(2000);

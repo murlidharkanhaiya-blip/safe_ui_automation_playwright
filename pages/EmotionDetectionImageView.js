@@ -5,9 +5,9 @@ class EmotionDetectionImageView {
     this.page = page;
 
     // ===== EXISTING LOCATORS (UNCHANGED) =====
-    this.emotiondeductioncard = "//div[@class='block hand box-shadow']";
-    this.tableRow = "//tbody/tr";
-    this.eyeIcon = "(//img[@title='View'])[1]";
+   this.emotiondeductioncard = "(//div[@class='block hand box-shadow'])[14]";
+    //this.tableRow = "//tbody/tr";
+    this.eyeIcon = "(//img[@title='View Employee Details'])[1]";
     this.drilldown = "(//*[name()='polyline'][@id='Path'])[1]";
     this.clicktoviewimage = "(//span[@title='Click to view image'])[1]";
   }
@@ -32,19 +32,11 @@ class EmotionDetectionImageView {
     await this.page.waitForLoadState('networkidle');
     await this.page.waitForTimeout(1000);
 
-    /* ===================== WAIT FOR TABLE ROW ===================== */
-
-    const rows = this.page.locator(this.tableRow);
-    const rowCount = await this.waitForVisibleRows(rows);
-
-    if (rowCount === 0) {
-      throw new Error("❌ No rows found in Emotion Detection table.");
-    }
+   
 
     /* ===================== CLICK EYE ICON ===================== */
 
     const eyeIcon = this.page.locator(this.eyeIcon);
-    await eyeIcon.scrollIntoViewIfNeeded();
     await expect(eyeIcon).toBeVisible({ timeout: 30000 });
     await eyeIcon.click({ force: true });
 

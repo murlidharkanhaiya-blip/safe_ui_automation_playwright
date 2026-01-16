@@ -4,7 +4,7 @@ class ExportReportConsolidatedRetainImage {
         this.page = page;
 
         // Locators
-       this.retainentitycardLocator = "(//div[@class='dashboard-box'])[2]";
+        this.retainEntityCard = page.locator('.dashboard-box:has-text("Retained Entities")');
         this.exporticon = "(//button[@data-testid='export-report'])[1]";
         this.csvbutton = "(//a[normalize-space()='CSV'])[1]";
         this.successToast = "//div[contains(text(),'Report has been sent to your email.')]";
@@ -14,7 +14,8 @@ class ExportReportConsolidatedRetainImage {
         await this.page.waitForLoadState('networkidle');
 
         // Step 1:✅ Select card retain employee
-        await this,this.page.locator(this.retainentitycardLocator).click();
+        await this.retainEntityCard.waitFor({ state: 'visible', timeout: 30000 });
+        await this.retainEntityCard.click();
 
         // Step 2: Click  action icon and Export > CSV
         

@@ -5,7 +5,7 @@ class ManageEmployeeSearch {
         this.page = page;
 
         // Locators
-        this.ManageemployeeNavViewLocator = "(//a[@data-testid='nav-link'])[11]";
+        this.manageemployeenavbar ="//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Manage Employees']//a[@data-testid='nav-link']";
         this.chiptexticonclose = "(//img[@class='chip-icon'])[1]";
         this.searchInput = "(//input[contains(@placeholder,'Search')])[2]";
         this.searchButton = "//div[@class='page-heading-actions']//div[@class='search-wrapper']//img[@alt='search']";
@@ -22,7 +22,9 @@ class ManageEmployeeSearch {
         await this.page.waitForLoadState('networkidle');
 
         // Navigate to Manage Employee page
-        await this.page.locator(this.ManageemployeeNavViewLocator).click();
+       const managempnav = this.page.locator(this.manageemployeenavbar);
+        await managempnav.waitFor({ state: 'visible', timeout: 15000 });
+        await managempnav.click();
 
         // Wait for potential loader to disappear
         const loader = this.page.locator('#global-loader-container >> .loading');

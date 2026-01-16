@@ -5,7 +5,8 @@ class ActivityLogSearch {
         this.page = page;
 
         // Locators
-        this.activitylogNavViewLocator = "(//*[name()='svg'])[18]";
+        this.activitylogNavViewLocator =
+  "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Activity Logs']//a[@data-testid='nav-link']";
         this.searchInput = "(//input[contains(@placeholder,'Search')])[2]";
         this.searchButton = "//div[@class='page-heading-actions']//div[@class='search-wrapper']//img[@alt='search']";
 
@@ -18,9 +19,11 @@ class ActivityLogSearch {
     async verifySearchOnactivitylogPage() {
         await this.page.waitForLoadState('networkidle');
 
-        // Navigate to Batch scheduling page
-        await this.page.locator(this.activitylogNavViewLocator).click();
-
+        // Navigate to activity log  page
+        /* Step 1: Click Activity Logs (sidebar only) */
+   const activityLogsNav = this.page.locator(this.activitylogNavViewLocator);
+  await activityLogsNav.waitFor({ state: 'visible', timeout: 15000 });
+  await activityLogsNav.click();
         // Wait for loader if visible
         const loader = this.page.locator('#global-loader-container >> .loading');
         if (await loader.isVisible().catch(() => false)) {

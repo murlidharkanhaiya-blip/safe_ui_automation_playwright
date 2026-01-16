@@ -1,75 +1,101 @@
 const { expect } = require('@playwright/test');
 
 class GeneralSettingsAudio {
-    constructor(page) {
-        this.page = page;
+  constructor(page) {
+    this.page = page;
 
-        // Locators
-        this.settingIcon = "(//*[name()='svg'])[19]";
-        this.audiotab="(//span[normalize-space()='Audio'])[1]";
+    /* Navigation */
+    this.settingIcon = page.locator("(//*[name()='svg'])[19]");
+    this.audioTab = page.locator("//span[normalize-space()='Audio']");
 
-        this.audiocapturetoggle = this.page.locator("(//div[@class='react-switch-bg'])[1]"); 
-        this.recordednoiseexpirationinput = this.page.locator("(//input[@id='noise_expiration'])[1]"); 
-        this.retainnoiseexpirationinput = this.page.locator("(//input[@id='retained_noise_expiration'])[1]"); 
-        this.savebutton = '.button-box__button.submit';
-        this.confrmsnpopup=this.page.locator("(//button[normalize-space()='SAVE'])[1]");
-        this.loader = '#global-loader-container .loading'; // loader blocking clicks
+    /* Inputs */
+    this.recordedNoiseExpirationInput =
+      page.locator("(//input[@id='noise_expiration'])[1]");
+    this.retainedNoiseExpirationInput =
+      page.locator("(//input[@id='retained_noise_expiration'])[1]");
 
-    }
-       async clearAndFill(inputLocator, value) {
-    await inputLocator.waitFor({ state: 'visible', timeout: 10000 });
-    await inputLocator.fill('');          // React-friendly clear
-    await inputLocator.fill(value);       // React-friendly set
+    /* Save buttons */
+    this.saveButton = page.locator('.button-box__button.submit');
 
+    //  REAL popup SAVE button (NO dialog role)
+    this.popupSaveButton = page.locator(
+      "(//button[normalize-space()='SAVE'])[1]"
+    );
 
-        
-    }
+    /* Loader */
+    this.loader = page.locator('#global-loader-container .loading');
 
-    async generalsettingAudio() {
+    /* Success popup */
+    this.confirmPopup = page.locator(
+      'text=/settings updated successfully/i'
+    );
+  }
 
-         await this.page.waitForLoadState('networkidle');
+  async setStableValue(input) {
+    await input.waitFor({ state: 'visible', timeout: 30000 });
+    await input.scrollIntoViewIfNeeded();
 
-         
-        // Step 1: Click the settings icon
-        const settingsIcon = this.page.locator(this.settingIcon);
-        await settingsIcon.waitFor({ state: 'visible', timeout: 10000 });
-        await settingsIcon.click();
+    const currentValue = await input.inputValue();
+    const newValue = String(Number(currentValue) + 1);
 
-        const audiotab = this.page.locator(this.audiotab);
-        await audiotab.waitFor({ state: 'visible', timeout: 10000 });
-        await audiotab.click();
-       //Step 2: enable/disable audio capture toggle
+    await input.click({ clickCount: 3 });
+    await input.fill('');
+    await input.type(newValue, { delay: 100 });
+    await input.evaluate(el => el.blur());
 
-        await this.page.waitForTimeout(500);
-        await this.audiocapturetoggle.click();
-        await this.page.waitForTimeout(500);
+    await expect
+      .poll(() => input.inputValue(), { timeout: 15000 })
+      .toBe(newValue);
+  }
 
-        // Step 3: Clear and fill all fields manually
-       await this.clearAndFill(this.recordednoiseexpirationinput, '20');
-        await this.page.waitForTimeout(500);
-       await this.clearAndFill(this.retainnoiseexpirationinput, '25');
-        await this.page.waitForTimeout(500);
+  async generalsettingAudio() {
+    /* Open Settings */
+    await this.settingIcon.waitFor({ state: 'visible', timeout: 20000 });
+    await this.settingIcon.click();
 
-      // Step 4: Wait for loader to disappear
-        await this.page.waitForSelector(this.loader, { state: 'hidden', timeout: 15000 });
+    /* Open Audio */
+    await this.audioTab.waitFor({ state: 'visible', timeout: 20000 });
+    await this.audioTab.click();
 
-        // Step 5: Wait for save button to be enabled and click
-        const saveButton = this.page.locator(this.savebutton);
-        await saveButton.waitFor({ state: 'visible', timeout: 10000 });
-        await expect(saveButton).toBeEnabled({ timeout: 10000 });
-        await saveButton.click();
-        await this.page.waitForTimeout(500);
-      
-         // Step 6: Wait for confrmsn popup  button to be enabled and click
+    /* Inputs ready */
+    await this.recordedNoiseExpirationInput.waitFor({
+      state: 'visible',
+      timeout: 30000,
+    });
 
-        await this.confrmsnpopup.click();
-        await this.page.waitForTimeout(500);
+    /* Update values */
+    await this.setStableValue(this.recordedNoiseExpirationInput);
+    await this.setStableValue(this.retainedNoiseExpirationInput);
 
-           
-        };
+    /* Main Save */
+    await this.loader.waitFor({ state: 'hidden', timeout: 30000 });
+    await expect(this.saveButton).toBeEnabled();
+    await this.saveButton.click();
 
-        
-    }
+    /* 🔥 WAIT FOR POPUP SAVE (KEY FIX) */
+    await this.popupSaveButton.waitFor({
+      state: 'visible',
+      timeout: 20000,
+    });
 
+    await expect
+      .poll(() => this.popupSaveButton.isEnabled(), { timeout: 10000 })
+      .toBe(true);
+
+    await this.popupSaveButton.scrollIntoViewIfNeeded();
+
+    // Click with guaranteed success
+    await this.popupSaveButton.click({ force: true });
+
+    /* Final loader */
+    await this.loader.waitFor({ state: 'hidden', timeout: 30000 });
+
+    /* Confirmation */
+    await this.confirmPopup.waitFor({
+      state: 'visible',
+      timeout: 20000,
+    });
+  }
+}
 
 module.exports = { GeneralSettingsAudio };

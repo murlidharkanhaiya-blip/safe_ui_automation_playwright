@@ -10,7 +10,7 @@ class ActivateDeactivateBatchSchedulingJob {
       ".fixed-left-sidebar a[data-testid='nav-link']:has-text('Batch Scheduling')"
     );
 
-    // Monthly Mail label
+    // Monthly Mail label row
     this.monthlyMailRow = page.locator(
       'div[data-testid="job-list-item__label"]',
       { hasText: 'Monthly Mail' }
@@ -26,38 +26,36 @@ class ActivateDeactivateBatchSchedulingJob {
   }
 
   async setMonthlyMail() {
-    // 1️⃣ Navigate
+    // 1️⃣ Navigate to Batch Scheduling
     await expect(this.sidebar).toBeVisible({ timeout: 20000 });
     await this.batchSchedulingLink.click();
     await this.page.waitForLoadState('networkidle');
 
-    // 2️⃣ Ensure switch visible
+    // 2️⃣ Ensure toggle is visible
     await expect(this.monthlyMailSwitch).toBeVisible({ timeout: 20000 });
     await this.monthlyMailSwitch.scrollIntoViewIfNeeded();
 
-    // ---------- ACTIVATE ----------
-    const colorBefore = await this.monthlyMailSwitch.evaluate(
+    // 3️⃣ Detect current state using background color
+    const initialColor = await this.monthlyMailSwitch.evaluate(
       el => getComputedStyle(el).backgroundColor
     );
 
-    const isOn = colorBefore === 'rgb(0, 136, 0)';
+    const isOn = initialColor === 'rgb(0, 136, 0)';
 
+    // ---------- ACTIVATE (only if OFF) ----------
     if (!isOn) {
-      // Click switch
       await this.monthlyMailSwitch.click({ force: true });
 
-      // Wait & click CONFIRM (NO TEXT VALIDATION)
       await expect(this.confirmButton).toBeVisible({ timeout: 10000 });
       await this.confirmButton.click();
 
-      // Wait for ON state
       await expect(this.monthlyMailSwitch).toHaveCSS(
         'background-color',
         'rgb(0, 136, 0)',
         { timeout: 20000 }
       );
 
-      // 🕒 Buffer wait (backend sync)
+      // Backend sync buffer
       await this.page.waitForTimeout(2000);
     }
 
@@ -67,14 +65,27 @@ class ActivateDeactivateBatchSchedulingJob {
     await expect(this.confirmButton).toBeVisible({ timeout: 10000 });
     await this.confirmButton.click();
 
-    // Wait for OFF state
     await expect(this.monthlyMailSwitch).toHaveCSS(
       'background-color',
       'rgb(136, 136, 136)',
       { timeout: 20000 }
     );
 
-    // 🕒 Final settle wait
+    await this.page.waitForTimeout(2000);
+
+    // ---------- RE-ACTIVATE ----------
+    await this.monthlyMailSwitch.click({ force: true });
+
+    await expect(this.confirmButton).toBeVisible({ timeout: 10000 });
+    await this.confirmButton.click();
+
+    await expect(this.monthlyMailSwitch).toHaveCSS(
+      'background-color',
+      'rgb(0, 136, 0)',
+      { timeout: 20000 }
+    );
+
+    // Final settle wait
     await this.page.waitForTimeout(2000);
   }
 }

@@ -1,110 +1,112 @@
 const { expect } = require('@playwright/test');
 
 class NSFWSearch {
-    constructor(page) {
-        this.page = page;
+  constructor(page) {
+    this.page = page;
 
-        // Locators
-        this.nsfwcardLocator = "(//span[normalize-space()='NSFW Activity(s)'])[1]";
-        this.searchInput = "(//input[contains(@placeholder,'Search')])[2]";
-        this.searchButton = "//div[@class='page-heading-actions']//div[@class='search-wrapper']//img[@alt='search']";
+    // Card
+    this.nsfwcardLocator = page.locator("(//span[normalize-space()='NSFW Activity(s)'])[1]");
 
-        this.tableRow = "tr.MuiTableRow-root";
-        this.idCell = "td:nth-child(1)";
-        this.nameCell = "td:nth-child(2)";
-        this.emailCell = "td:nth-child(3)";
+    this.loader = page.locator('#global-loader-container');
+
+    /* SEARCH */
+    this.searchBy = page.locator('[data-testid="searchBy"]');
+    this.searchInput = page.locator("(//input[contains(@placeholder,'Search')])[2]");
+    this.searchIcon = page.locator("(//img[@alt='search'])[last()]");
+
+    /* TABLE */
+    this.rows = page.locator('tbody tr.MuiTableRow-root');
+  }
+
+  async waitForLoader() {
+    try {
+      await this.loader.waitFor({ state: 'hidden', timeout: 20000 });
+    } catch {}
+  }
+
+  async waitForLoader() {
+    if (await this.loader.isVisible().catch(() => false)) {
+      await this.loader.waitFor({ state: 'hidden', timeout: 30000 });
+    }
+  }
+
+  async waitForRows() {
+    await expect(this.rows.first()).toBeVisible({ timeout: 30000 });
+    const count = await this.rows.count();
+    expect(count).toBeGreaterThan(0);
+  }
+
+  /* ---------- SAFE TEXT READ (NO FLAKE) ---------- */
+  async getCellText(row, index) {
+    return await row.evaluate((el, i) => {
+      const cell = el.querySelector(`td:nth-child(${i})`);
+      return cell ? cell.innerText.trim() : '';
+    }, index);
+  }
+
+  /* ---------- PICK RANDOM VALID ROW ---------- */
+  async pickRandomRow() {
+    const count = await this.rows.count();
+    const validRows = [];
+
+    for (let i = 0; i < count; i++) {
+      const row = this.rows.nth(i);
+      await row.scrollIntoViewIfNeeded();
+
+      const id = await this.getCellText(row, 1);
+      const name = await this.getCellText(row, 2);
+      const email = await this.getCellText(row, 3);
+
+      if (id && name && email && id !== 'Emp ID') {
+        validRows.push({ id, name, email });
+      }
     }
 
-    async verifySearchonnsfwPage() {
-        await this.page.waitForLoadState('networkidle');
-
-        // Click on NSFW Activity(s) card
-        await this.page.locator(this.nsfwcardLocator).click();
-
-        // Wait for loader to disappear
-        const loader = this.page.locator('#global-loader-container >> .loading');
-        if (await loader.isVisible().catch(() => false)) {
-            await loader.waitFor({ state: 'hidden', timeout: 15000 });
-        }
-
-        // Wait for table row visibility
-        const rows = this.page.locator(this.tableRow);
-        await rows.first().waitFor({ state: 'visible', timeout: 15000 });
-
-        const count = await rows.count();
-        if (count === 0) {
-            throw new Error("❌ No employee rows found.");
-        }
-
-        // Pick a random row
-        const randomIndex = Math.floor(Math.random() * count);
-        const randomRow = rows.nth(randomIndex);
-
-        // Wait for individual cells in the row
-        const idLocator = randomRow.locator(this.idCell);
-        const nameLocator = randomRow.locator(this.nameCell);
-        const emailLocator = randomRow.locator(this.emailCell);
-
-        await Promise.all([
-            idLocator.waitFor({ state: 'visible', timeout: 10000 }),
-            nameLocator.waitFor({ state: 'visible', timeout: 10000 }),
-            emailLocator.waitFor({ state: 'visible', timeout: 10000 }),
-        ]);
-
-        const employeeId = (await idLocator.innerText()).trim();
-        const employeeName = (await nameLocator.innerText()).trim();
-        const employeeEmail = (await emailLocator.innerText()).trim();
-
-        console.log(`🔍 Picked Random Employee:\n  ID: ${employeeId}\n  Name: ${employeeName}\n  Email: ${employeeEmail}`);
-
-        const searchInput = this.page.locator(this.searchInput);
-
-        const performSearchAndAssert = async (criteriaText, inputValue, cellSelector, label) => {
-            console.log(`\n🔎 Searching by ${label}: "${inputValue}"`);
-
-            // Click dropdown to select search criteria
-            const trigger = this.page.locator('[data-testid="searchBy"]');
-            await trigger.click();
-
-            const dropdownWrapper = this.page.locator('.search__options--dropdown');
-            await dropdownWrapper.waitFor({ state: 'visible', timeout: 5000 });
-
-            const option = dropdownWrapper.locator(`.search__option--item:has-text("${criteriaText}")`);
-            await option.waitFor({ state: 'visible', timeout: 5000 });
-            await option.click();
-
-            await this.page.waitForTimeout(300); // debounce input
-            await searchInput.fill('');
-            await searchInput.fill(inputValue);
-            await this.page.locator(this.searchButton).click();
-
-            const resultRows = this.page.locator(this.tableRow);
-            await this.page.waitForTimeout(1500); // Wait for result rendering
-
-            const resultCount = await resultRows.count();
-            if (resultCount === 0) {
-                console.warn(`⚠️ No results found for ${label}: "${inputValue}"`);
-                return;
-            }
-
-            const resultRow = resultRows.first();
-            const resultCell = resultRow.locator(cellSelector);
-
-            try {
-                await resultCell.waitFor({ state: 'visible', timeout: 5000 });
-                const resultText = (await resultCell.innerText()).trim();
-                expect(resultText).toContain(inputValue);
-                console.log(`✅ ${label} search completed`);
-            } catch (err) {
-                console.warn(`⚠️ ${label} search result check failed for "${inputValue}"`);
-            }
-        };
-
-        // Perform all search checks
-        await performSearchAndAssert("Employee ID", employeeId, this.idCell, "Employee ID");
-        await performSearchAndAssert("Employee Name", employeeName, this.nameCell, "Employee Name");
-        await performSearchAndAssert("Employee Email", employeeEmail, this.emailCell, "Employee Email");
+    if (validRows.length === 0) {
+      throw new Error('❌ No valid data rows found in table');
     }
+
+    const picked = validRows[Math.floor(Math.random() * validRows.length)];
+    console.log('🎯 Picked Row:', picked);
+    return picked;
+  }
+
+  /* ---------- SEARCH ---------- */
+  async searchAndVerify(criteria, value, columnIndex) {
+    await this.searchBy.click();
+    await this.page.locator(`text=${criteria}`).click();
+
+    await this.searchInput.fill(value);
+    await this.searchIcon.click();
+
+    const resultRow = this.rows.first();
+    await expect(resultRow).toBeVisible({ timeout: 20000 });
+
+    const resultText = await this.getCellText(resultRow, columnIndex);
+    expect(resultText).toContain(value);
+
+    console.log(`✅ ${criteria} search verified → ${value}`);
+
+    // reset
+    await this.searchInput.fill('');
+    await this.searchIcon.click();
+    await this.waitForRows();
+  }
+
+
+  async verifySearchonnsfwPage() {
+    await this.nsfwcardLocator.waitFor({ state: 'visible', timeout: 30000 });
+    await this.nsfwcardLocator.click();
+
+    await this.waitForLoader();
+    await this.waitForRows();
+
+    const { id, name, email } = await this.pickRandomRow();
+
+    await this.searchAndVerify('Employee ID', id, 1);
+    await this.searchAndVerify('Employee Name', name, 2);
+    await this.searchAndVerify('Employee Email', email, 3);
+  }
 }
 
 module.exports = { NSFWSearch };

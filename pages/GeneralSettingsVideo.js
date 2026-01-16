@@ -5,68 +5,88 @@ class GeneralSettingsVideo {
         this.page = page;
 
         // Locators
-        this.settingIcon = "(//*[name()='svg'])[19]";
-        this.videotab="(//span[normalize-space()='Video'])[1]";
+        this.settingIcon = page.locator("(//*[name()='svg'])[19]");
+       this.videotab = page.locator("(//span[normalize-space()='Video'])[1]");
 
-        this.videocapturetoggle = this.page.locator("(//div[@class='react-switch-bg'])[1]"); 
+       // this.videocapturetoggle = this.page.locator("(//div[@class='react-switch-bg'])[1]"); 
         this.capturevideoexpirationinput = this.page.locator("(//input[@id='video_expiration'])[1]"); 
         this.retainvideoxpirationinput = this.page.locator("(//input[@id='retained_video_expiration'])[1]"); 
-        this.savebutton = '.button-box__button.submit';
-        this.confrmsnpopup=this.page.locator("(//button[normalize-space()='SAVE'])[1]");
-        this.loader = '#global-loader-container .loading'; // loader blocking clicks
+       /* Save buttons */
+      this.saveButton = page.locator('.button-box__button.submit');
+        this.popupSaveButton=this.page.locator("(//button[normalize-space()='SAVE'])[1]");
+        /* Loader */
+    this.loader = page.locator('#global-loader-container .loading');
+         /* Success popup */
+    this.confirmPopup = page.locator(
+      'text=/settings updated successfully/i');
 
     }
-       async clearAndFill(inputLocator, value) {
-    await inputLocator.waitFor({ state: 'visible', timeout: 10000 });
-    await inputLocator.fill('');          // React-friendly clear
-    await inputLocator.fill(value);       // React-friendly set
 
+ async setStableValue(input) {
+    await input.waitFor({ state: 'visible', timeout: 30000 });
+    await input.scrollIntoViewIfNeeded();
 
-        
-    }
+    const currentValue = await input.inputValue();
+    const newValue = String(Number(currentValue) + 1);
+
+    await input.click({ clickCount: 3 });
+    await input.fill('');
+    await input.type(newValue, { delay: 100 });
+    await input.evaluate(el => el.blur());
+
+    await expect
+      .poll(() => input.inputValue(), { timeout: 15000 })
+      .toBe(newValue);
+  }
+
 
     async generalsettingVideo() {
 
-         await this.page.waitForLoadState('networkidle');
+   /* Open Settings */
+    await this.settingIcon.waitFor({ state: 'visible', timeout: 20000 });
+    await this.settingIcon.click();
 
-         
-        // Step 1: Click the settings icon
-        const settingsIcon = this.page.locator(this.settingIcon);
-        await settingsIcon.waitFor({ state: 'visible', timeout: 10000 });
-        await settingsIcon.click();
+    /* Open Audio */
+    await this.videotab.waitFor({ state: 'visible', timeout: 20000 });
+    await this.videotab.click();
 
-        const videotab = this.page.locator(this.videotab);
-        await videotab.waitFor({ state: 'visible', timeout: 10000 });
-        await videotab.click();
-       //Step 2: enable/disable video capture toggle
+    /* Inputs ready */
+    await this.capturevideoexpirationinput.waitFor({
+      state: 'visible',
+      timeout: 30000,
+    });
+       /* Update values */
+    await this.setStableValue(this.capturevideoexpirationinput);
+    await this.setStableValue(this.retainvideoxpirationinput);
 
-        await this.page.waitForTimeout(500);
-        await this.videocapturetoggle.click();
-        await this.page.waitForTimeout(500);
+    /* Main Save */
+    await this.loader.waitFor({ state: 'hidden', timeout: 30000 });
+    await expect(this.saveButton).toBeEnabled();
+    await this.saveButton.click();
 
-        // Step 3: Clear and fill all fields manually
-       await this.clearAndFill(this.capturevideoexpirationinput, '20');
-        await this.page.waitForTimeout(500);
-       await this.clearAndFill(this.retainvideoxpirationinput, '25');
-        await this.page.waitForTimeout(500);
+    /*  WAIT FOR POPUP SAVE  */
+    await this.popupSaveButton.waitFor({
+      state: 'visible',
+      timeout: 20000,
+    });
 
-      // Step 4: Wait for loader to disappear
-        await this.page.waitForSelector(this.loader, { state: 'hidden', timeout: 15000 });
+    await expect
+      .poll(() => this.popupSaveButton.isEnabled(), { timeout: 10000 })
+      .toBe(true);
 
-        // Step 5: Wait for save button to be enabled and click
-        const saveButton = this.page.locator(this.savebutton);
-        await saveButton.waitFor({ state: 'visible', timeout: 10000 });
-        await expect(saveButton).toBeEnabled({ timeout: 10000 });
-        await saveButton.click();
-        await this.page.waitForTimeout(500);
-      
-         // Step 6: Wait for confrmsn popup  button to be enabled and click
+    await this.popupSaveButton.scrollIntoViewIfNeeded();
 
-        await this.confrmsnpopup.click();
-        await this.page.waitForTimeout(500);
+    // Click with  success
+    await this.popupSaveButton.click({ force: true });
 
+    /* Final loader */
+    await this.loader.waitFor({ state: 'hidden', timeout: 30000 });
 
-
+    /* Confirmation */
+    await this.confirmPopup.waitFor({
+      state: 'visible',
+      timeout: 20000,
+    });
            
         };
 

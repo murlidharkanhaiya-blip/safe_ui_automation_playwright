@@ -16,7 +16,7 @@ class FilterChipActivityLogs {
     async verifyactivitylogsfilterchip() {
         await this.page.waitForLoadState('networkidle');
 
-        // Step 1: Navigate to Batch Scheduling page
+        // Step 1: Navigate to activity log  page
         await this.page.locator(this.FilterchipactivitylogsNavViewLocator).click();
         await this.page.waitForTimeout(2000);
 
@@ -30,8 +30,6 @@ class FilterChipActivityLogs {
             await this.selectrange.click();
             await this.page.waitForTimeout(1000);
 
-
-        
 
             // Select the given yesterday value
             const selectyesterday = this.page.locator("(//li[@data-range-key='Yesterday'])[1]");
@@ -47,8 +45,7 @@ class FilterChipActivityLogs {
             await this.page.waitForTimeout(2000);
         };
 
-        
-        
+
     }
 
 

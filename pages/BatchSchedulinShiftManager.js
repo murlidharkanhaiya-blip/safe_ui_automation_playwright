@@ -4,7 +4,7 @@ class BatchSchedulinShiftManager {
     constructor(page) {
         this.page = page;
 
-        this.batchschedulingnavbar = this.page.locator("(//*[name()='svg'])[16]");
+       this.batchschedulingnavbar = "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Batch Scheduling']//a[@data-testid='nav-link']";
        this.shiftmanagerbutton = this.page.locator("(//div[contains(text(),'Shift Manager')])[1]");
         this.createnewscheduler = this.page.locator("(//button[normalize-space()='Create New scheduler'])[1]");
         this.SchedulerNameInput = page.locator("(//input[@id='scheduler_name'])[1]");
@@ -24,9 +24,11 @@ class BatchSchedulinShiftManager {
     }
 
     async Batchschedulingjobshiftmanager() {
-        await this.batchschedulingnavbar.click();
-        await this.page.waitForTimeout(2000);
-
+       // batch scheduling nav view click
+         /* Step 1: Click batch scheduling (sidebar only) */
+   const batchschedulingnav = this.page.locator(this.batchschedulingnavbar);
+  await batchschedulingnav.waitFor({ state: 'visible', timeout: 15000 });
+  await batchschedulingnav.click();
         await this.shiftmanagerbutton.click();
         await this.page.waitForTimeout(2000);
 

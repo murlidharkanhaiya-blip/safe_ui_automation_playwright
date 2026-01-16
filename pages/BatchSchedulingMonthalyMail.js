@@ -4,7 +4,7 @@ class BatchSchedulingMonthalyMail {
     constructor(page) {
         this.page = page;
 
-        this.batchschedulingnavbar = this.page.locator("(//*[name()='svg'])[16]");
+        this.batchschedulingnavbar = "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Batch Scheduling']//a[@data-testid='nav-link']";
        this.monthalymailbutton = this.page.locator("(//div[contains(text(),'Monthly Mail')])[1]");
         this.createnewscheduler = this.page.locator("(//button[normalize-space()='Create New scheduler'])[1]");
         this.SchedulerNameInput = page.locator("(//input[@id='scheduler_name'])[1]");
@@ -24,8 +24,11 @@ class BatchSchedulingMonthalyMail {
     }
 
     async Batchschedulingjobmonthalymail() {
-        await this.batchschedulingnavbar.click();
-        await this.page.waitForTimeout(2000);
+        // batch scheduling nav view click
+         /* Step 1: Click batch scheduling (sidebar only) */
+   const batchschedulingnav = this.page.locator(this.batchschedulingnavbar);
+  await batchschedulingnav.waitFor({ state: 'visible', timeout: 15000 });
+  await batchschedulingnav.click();
 
         await this.monthalymailbutton.click();
         await this.page.waitForTimeout(2000);
@@ -90,8 +93,8 @@ await this.page.waitForTimeout(1000);
 const selectedValue = await timezoneInput.inputValue();
 console.log("✅ Timezone selected:", selectedValue);
 
-const errorMessages = await this.page.locator(".error-message").allTextContents();
-console.log("Form errors:", errorMessages);
+//const errorMessages = await this.page.locator(".error-message").allTextContents();
+//console.log("Form errors:", errorMessages);
 
 // Scroll to Save button
 const saveButton = this.page.locator("(//button[normalize-space()='Save'])[1]");

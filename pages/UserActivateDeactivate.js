@@ -5,7 +5,7 @@ class UserActivateDeactivate {
         this.page = page;
 
         // Locators
-        this.ManageuserNavViewLocator = "(//a[@data-testid='nav-link'])[13]";
+        this.ManageuserNavViewLocator = "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Manage Users']//a[@data-testid='nav-link']";
         this.filterchip = this.page.locator("(//div[@class='filter-icon hand '])[1]");
         this.selectstatus = this.page.locator("(//div[@class='inputBoxDiv ellipsis '])[1]");
         this.applybtn = this.page.locator("//button[@data-testid='apply-filter']");
@@ -23,8 +23,9 @@ class UserActivateDeactivate {
         await this.page.waitForLoadState('networkidle');
 
         // Step 1: Navigate
-        await this.page.locator(this.ManageuserNavViewLocator).click();
-        await this.page.waitForTimeout(2000);
+       const manageusernav = this.page.locator(this.ManageuserNavViewLocator);
+      await manageusernav.waitFor({ state: 'visible', timeout: 15000 });
+      await manageusernav.click();
 
         // Step 2: Filter
         await this.filterchip.click();

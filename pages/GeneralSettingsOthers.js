@@ -16,7 +16,7 @@ this.settingsIcon = this.page
         this.othertab = "(//span[normalize-space()='Other'])[1]";
         this.calendarexpirationdaterangeinput = this.page.locator("(//input[@id='calendar_date'])[1]");
         this.workdayintegrationtoggle = this.page.locator("(//div[@class='react-switch-bg'])[1]");
-        this.shiftmanagementtoggle = this.page.locator("(//div[@class='react-switch-bg'])[2]");
+        //this.shiftmanagementtoggle = this.page.locator("(//div[@class='react-switch-bg'])[2]");
         this.trackemployeelocationtoggle = this.page.locator("(//div[@class='react-switch-bg'])[3]");
         this.autorefreshtoggle = this.page.locator("(//div[@class='react-switch-bg'])[4]");
         this.bulkuploadlimit = this.page.locator("(//input[@id='bulk_onboard_record_limit'])[1]");
@@ -94,11 +94,11 @@ this.settingsIcon = this.page
         await this.clearAndFill(this.calendarexpirationdaterangeinput, "20");
 
         await this.clickToggle(this.workdayintegrationtoggle);
-        await this.clickToggle(this.shiftmanagementtoggle);
+       // await this.clickToggle(this.shiftmanagementtoggle);
         await this.clickToggle(this.trackemployeelocationtoggle);
         await this.clickToggle(this.autorefreshtoggle);
 
-        await this.clearAndFill(this.bulkuploadlimit, "700");
+        await this.clearAndFill(this.bulkuploadlimit, "500");
 
         // --- WAIT FOR SAVE BUTTON TO BE ENABLED ---
         const saveButton = this.page.locator(this.savebutton);

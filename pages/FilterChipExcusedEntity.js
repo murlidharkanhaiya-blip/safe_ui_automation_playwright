@@ -5,7 +5,8 @@ class FilterChipExcusedEntity {
         this.page = page;
 
         // Locators
-        this.excusedentityNavViewLocator = "(//div[@class='dashboard-box'])[4]";
+        this.excusedentityCard = page.locator('.dashboard-box:has-text("Excused Entities")');
+        this.loader = page.locator('#global-loader-container');  
         this.filterchip = this.page.locator("(//div[@class='filter-icon hand '])[1]");
         this.selectstatus = this.page.locator("(//div[@class='inputBoxDiv ellipsis '])[2]");
         this.applybtn = this.page.locator("//button[@data-testid='apply-filter']");
@@ -14,12 +15,19 @@ class FilterChipExcusedEntity {
         this.overlay = this.page.locator("//div[contains(@class,'overlay')]");
     }
 
+    async waitForLoader() {
+    if (await this.loader.isVisible().catch(() => false)) {
+      await this.loader.waitFor({ state: 'hidden', timeout: 30000 });
+    }
+  }
+
     async verifyexcusedentityfilterchip() {
         await this.page.waitForLoadState('networkidle');
 
         // Step 1: Navigate to excused entity
-        await this.page.locator(this.excusedentityNavViewLocator).click();
-        await this.page.waitForTimeout(2000);
+        await this.excusedentityCard.waitFor({ state: 'visible', timeout: 30000 });
+        await this.excusedentityCard.click();
+         await this.waitForLoader();
 
         // Function to select and apply a given filter
         const selectAndApplyFilter = async (filterName) => {

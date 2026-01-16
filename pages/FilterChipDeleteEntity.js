@@ -1,52 +1,61 @@
 const { expect } = require('@playwright/test');
 
 class FilterChipDeleteEntity {
-    constructor(page) {
-        this.page = page;
+  constructor(page) {
+    this.page = page;
 
-        // Locators
-        this.DeleteEntityNavViewLocator = "(//div[@class='dashboard-box'])[3]";
-        this.filterchip = this.page.locator("(//div[@class='filter-icon hand '])[1]");
-         this.selectrange = this.page.locator("(//input[@placeholder='Select Range'])[1]");
-        this.applybtn = this.page.locator("//button[@data-testid='apply-filter']");
+    this.deletedEntityCard = page.locator(
+      "div.block-container.deleted-images-block",
+      { hasText: 'Deleted Entities' }
+    );
 
-        // Optional overlay locator
-        this.overlay = this.page.locator("//div[contains(@class,'overlay')]");
+    this.filterchip = page.locator("//div[contains(@class,'filter-icon')]");
+    this.selectrange = page.locator("//input[@placeholder='Select Range']");
+    this.applybtn = page.locator("//button[@data-testid='apply-filter']");
+    this.overlay = page.locator("//div[contains(@class,'overlay')]");
+  }
+
+  // 🔥 Faster overlay handler
+  async waitForOverlayIfPresent(timeout = 10000) {
+    if (await this.overlay.count() > 0) {
+      try {
+        if (await this.overlay.isVisible({ timeout: 1000 })) {
+          await this.overlay.waitFor({ state: 'hidden', timeout });
+        }
+      } catch {}
     }
+  }
 
-    async verifydeletetityfilterchip() {
-        await this.page.waitForLoadState('networkidle');
+  async verifydeletetityfilterchip() {
+    // Dashboard card
+    await expect(this.deletedEntityCard).toBeVisible({ timeout: 20000 });
+    await this.waitForOverlayIfPresent();
+    await this.deletedEntityCard.click();
 
-        // Step 1: Navigate to delete image
-        await this.page.locator(this.DeleteEntityNavViewLocator).click();
-        await this.page.waitForTimeout(2000);
+    // Page ready
+    await expect(this.filterchip).toBeVisible({ timeout: 15000 });
 
-       // Open filter chip
-            await this.filterchip.click();
-            await this.page.waitForTimeout(1000);
+    // Open filter
+    await this.filterchip.click();
 
-            // Open date range 
-            await this.selectrange.click();
-            await this.page.waitForTimeout(1000);
+    // Date range
+    await expect(this.selectrange).toBeVisible({ timeout: 10000 });
+    await this.selectrange.click();
 
+    const last90DaysOption = this.page.locator(
+      "//li[@data-range-key='Last 90 Days']"
+    );
+    await expect(last90DaysOption).toBeVisible({ timeout: 10000 });
+    await last90DaysOption.click();
 
-        
+    // ⚡ FAST APPLY CLICK
+    await this.waitForOverlayIfPresent();
 
-            // Select the given yesterday value
-            const selectlast90days = this.page.locator("(//li[@data-range-key='Last 90 Days'])[1]");
-            await selectlast90days.waitFor({ state: 'visible', timeout: 8000 });
-            await selectlast90days.click({ force: true });
-            await this.page.waitForTimeout(1000);
+    await expect(this.applybtn).toBeVisible({ timeout: 3000 });
+    await this.applybtn.click();
 
-            // Click Apply button
-            await this.applybtn.waitFor({ state: 'visible', timeout: 8000 });
-            await this.applybtn.scrollIntoViewIfNeeded();
-            await this.applybtn.click({ force: true });
-            console.log(`✅ Filter "Last 90 days" applied successfully.`);
-            await this.page.waitForTimeout(2000);
-        };
-
-    }
-
+    console.log("🎉 Filter 'Last 90 Days' applied successfully.");
+  }
+}
 
 module.exports = { FilterChipDeleteEntity };

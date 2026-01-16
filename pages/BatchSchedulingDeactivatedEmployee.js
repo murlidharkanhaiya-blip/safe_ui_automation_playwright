@@ -4,7 +4,7 @@ class BatchSchedulingDeactivatedEmployee {
     constructor(page) {
         this.page = page;
 
-        this.batchschedulingnavbar = this.page.locator("(//*[name()='svg'])[16]");
+    this.batchschedulingnavbar = "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Batch Scheduling']//a[@data-testid='nav-link']";
        this.deactivatedemployeebutton = this.page.locator("(//div[contains(text(),'Deactivated Employees')])[1]");
         this.createnewscheduler = this.page.locator("(//button[normalize-space()='Create New scheduler'])[1]");
         this.SchedulerNameInput = page.locator("(//input[@id='scheduler_name'])[1]");
@@ -24,8 +24,9 @@ class BatchSchedulingDeactivatedEmployee {
     }
 
     async Batchschedulingjobdeactivatedemployee() {
-        await this.batchschedulingnavbar.click();
-        await this.page.waitForTimeout(2000);
+        const batchschedulingnav = this.page.locator(this.batchschedulingnavbar);
+  await batchschedulingnav.waitFor({ state: 'visible', timeout: 15000 });
+  await batchschedulingnav.click();
 
         await this.deactivatedemployeebutton.click();
         await this.page.waitForTimeout(2000);

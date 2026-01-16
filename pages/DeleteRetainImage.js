@@ -4,8 +4,9 @@ class DeleteRetainImage {
     constructor(page) {
         this.page = page;
 
-        this.retainentitycardLocator = this.page.locator("(//div[@class='dashboard-box'])[2]");
-       this.eyeicon=this.page.locator("(//img[@title='View'])[1]");
+        this.retainEntityCard = page.locator('.dashboard-box:has-text("Retained Entities")');
+        //this.loader = page.locator('#global-loader-container');
+        this.eyeicon=this.page.locator("(//img[@title='View'])[1]");
         this.drilldown = this.page.locator("(//*[name()='polyline'][@id='Path'])[1]");
 
         // ✅ image delete
@@ -30,7 +31,9 @@ class DeleteRetainImage {
         await this.page.waitForLoadState('networkidle');
 
        // Step 1:✅ Select card delete retain image
-        await this.retainentitycardLocator.click();
+        await this.retainEntityCard.waitFor({ state: 'visible', timeout: 30000 });
+        await this.retainEntityCard.click();
+
         await this.eyeicon.click();
         await this.drilldown.click();
 
