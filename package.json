@@ -1,21 +1,38 @@
 {
   "name": "playwright_safe_automation_vscodeex",
   "version": "1.0.0",
-  "description": "",
+  "description": "Safe UI Automation using Playwright with Allure Reports",
   "main": "index.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-  "test": "npx playwright test",
-  "test:headed": "npx playwright test --headed",
-  "report": "npx playwright show-report"
-},
-  "keywords": [],
-  "author": "",
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:ui": "npx playwright test --ui",
+    "test:chrome": "npx playwright test --project=chromium",
+    "report": "npx playwright show-report",
+    "allure:generate": "npx allure generate allure-results --clean -o allure-report",
+    "allure:open": "npx allure open allure-report",
+    "allure:serve": "npx allure serve allure-results",
+    "test:allure": "npx playwright test && npm run allure:generate && npm run allure:open",
+    "clean:reports": "rm -rf allure-results allure-report test-results playwright-report",
+    "clean:all": "rm -rf allure-results allure-report test-results playwright-report node_modules package-lock.json"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "testing",
+    "allure",
+    "safe"
+  ],
+  "author": "Murlidhar Kanhaiya",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@playwright/test": "^1.53.1"
+    "@playwright/test": "^1.53.1",
+    "allure-commandline": "^2.36.0",
+    "allure-playwright": "^3.4.5"
   }
 }
