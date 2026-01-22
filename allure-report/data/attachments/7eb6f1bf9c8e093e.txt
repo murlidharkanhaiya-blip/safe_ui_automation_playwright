@@ -1,0 +1,2 @@
+✅ Filter "Yesterday" applied successfully.
+✅ Test completed and browser closed after verification.

@@ -1,0 +1,17 @@
+✅ Table loaded with 2 rows
+⏭ Skipping unstable row 1
+🔍 Picked Employee:
+  ID: XIND17934
+  Name: Rohit Bhadouriya
+  Email: rohit.bhadouriya@telusinternational.com
+
+🔎 Searching by Employee ID: "XIND17934"
+✅ Employee ID search verified.
+
+🔎 Searching by Employee Name: "Rohit Bhadouriya"
+✅ Employee Name search verified.
+
+🔎 Searching by Employee Email: "rohit.bhadouriya@telusinternational.com"
+⏳ Retry 1: Unable to read result cell
+⏳ Retry 2: Unable to read result cell
+⏳ Retry 3: Unable to read result cell

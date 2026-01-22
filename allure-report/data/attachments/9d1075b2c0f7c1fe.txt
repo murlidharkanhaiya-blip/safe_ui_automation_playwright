@@ -1,0 +1,6 @@
+{
+  id: 'xav3232',
+  name: 'PlayWright_test13232',
+  email: 'PlayWright_test3232@telusinternational.com'
+}
+✅ Test completed and browser closed after export.

@@ -1,0 +1,2 @@
+✅ Export success message appeared and screenshot taken.
+✅ Test completed and browser closed after export.

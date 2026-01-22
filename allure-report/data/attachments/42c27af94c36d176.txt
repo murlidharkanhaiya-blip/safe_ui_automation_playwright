@@ -1,0 +1,10 @@
+✅ Scheduler Name filled
+✅ Date range 'Tomorrow' selected
+Selecting Duration: Daily
+✅ Duration selected: Daily
+Selecting Occurrence: Twice
+✅ Occurrences selected: Twice
+✅ Timezone selected: India Standard Time
+Form errors: []
+✅ Save button clicked
+✅ Test completed and browser closed after verification.

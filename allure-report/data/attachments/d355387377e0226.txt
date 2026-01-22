@@ -1,0 +1,11 @@
+📂 Navigating to Manage Users...
+✅ Clicked Manage Users
+⏳ Loader hidden
+🎯 Selected User:
+        Employee ID: 10194184
+        Username: Rohit Bhadouriya+4
+        Email ID: rohit.bhadouriya+4@telusinternational.com
+🔎 Searching by Employee ID: "10194184"
+⏳ Loader hidden
+🔎 Searching by Username: "Rohit Bhadouriya+4"
+⏳ Loader hidden

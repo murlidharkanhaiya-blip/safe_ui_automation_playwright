@@ -1,0 +1,9 @@
+🎯 Picked Row: {
+  id: '110065',
+  name: 'Narender Testuser',
+  email: 'automation.user29264@telusinternational.com'
+}
+✅ Employee ID search verified → 110065
+✅ Employee Name search verified → Narender Testuser
+✅ Employee Email search verified → automation.user29264@telusinternational.com
+✅ Test completed and browser closed after search.

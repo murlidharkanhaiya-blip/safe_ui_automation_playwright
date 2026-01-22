@@ -1,0 +1,5 @@
+▶️ Starting live streaming test...
+ℹ️ Found 4 employees.
+✅ Clicked employee at index 1
+✅ Clicked live streaming icon successfully.
+✅ Test completed and browser closed after verification.

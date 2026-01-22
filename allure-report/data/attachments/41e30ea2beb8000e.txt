@@ -1,0 +1,5 @@
+🎯 Applying filter: Deactivated
+✅ Filter "Deactivated" applied successfully.
+🎯 Applying filter: Total Users
+✅ Filter "Total Users" applied successfully.
+✅ Test completed and browser closed after verification.

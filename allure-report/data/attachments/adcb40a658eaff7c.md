@@ -1,0 +1,153 @@
+# Page snapshot
+
+```yaml
+- img "logo"
+- text: SAFE iLabs
+- searchbox "Search by Emp. Name/ID": roh
+- img "reset"
+- img "search"
+- img "user"
+- text: Rohit Bhadouriya (XIND17934) rohit.bhadouriya@telusinternational.com
+- img "user"
+- text: Rohit 17 (10194184y) rohit.bhadouriya+17@telusinternational.com
+- img "user"
+- text: rohit.bhadouriya+1130 (198399) rohit.bhadouriya+1130@telusinternational.com
+- img "user"
+- text: rohit.bhadouriya+1131 (198400) rohit.bhadouriya+1131@telusinternational.com
+- img "user"
+- text: rohit.bhadouriya+1132 (198401) rohit.bhadouriya+1132@telusinternational.com
+- img "user"
+- text: rohit.bhadouriya+1133 (198402) rohit.bhadouriya+1133@telusinternational.com
+- img "user"
+- text: rohit.bhadouriya+1134 (198403) rohit.bhadouriya+1134@telusinternational.com
+- img "user"
+- text: rohit.bhadouriya+1135 (198404) rohit.bhadouriya+1135@telusinternational.com
+- img "user"
+- text: rohit.bhadouriya+1136 (198405) rohit.bhadouriya+1136@telusinternational.com
+- img "user"
+- text: rohit.bhadouriya+1137 (198406) rohit.bhadouriya+1137@telusinternational.com
+- img "logo"
+- text: "8 AI admin.ilabs Last Login: 22-Jan-2026, 11:46 AM"
+- list:
+  - listitem:
+    - link:
+      - /url: /dashboard
+      - img
+  - listitem:
+    - link:
+      - /url: /employees
+      - img
+  - listitem:
+    - link:
+      - /url: /bulk-upload
+      - img
+  - listitem:
+    - link:
+      - /url: /users
+      - img
+  - listitem:
+    - link:
+      - /url: /live-streaming
+      - img
+  - listitem:
+    - link:
+      - /url: /screenlock/pending
+      - img
+  - listitem:
+    - link:
+      - /url: /batch-scheduling
+      - img
+  - listitem:
+    - link:
+      - /url: /utility-updates/windows
+      - img
+  - listitem:
+    - link:
+      - /url: /activity-logs
+      - img
+- list:
+  - listitem:
+    - link:
+      - /url: /settings/image_general_setting
+      - img
+- main:
+  - heading "Hello, admin.ilabs" [level=4]
+  - heading [level=6]
+  - text: Quick Overview Live
+  - img "trend"
+  - text: Utility Stats 20 Active
+  - img "empStats"
+  - text: "2"
+  - progressbar
+  - text: Inactive
+  - img "empStats"
+  - text: "4"
+  - progressbar
+  - text: Uninstalled
+  - img "empStats"
+  - text: "14"
+  - progressbar
+  - text: Suspicious Activities Spoof Detection
+  - img "empStats"
+  - text: 32 Object Detection
+  - img "empStats"
+  - text: 87 Shoulder Surfing
+  - img "empStats"
+  - text: 3 NSFW Activity(s) Indecency Detection
+  - img
+  - text: "2 Noise Detection 1021 Total Idle Employees 1 Top Face Detection Failures Murli Kumar 89% Rohit Bhadouriya 57% Screenshot Captured 187 (Last Activity: 22-Jan-2026, 11:45 AM)"
+  - img "refresh"
+  - textbox "Select Range": 25-Oct-2025 - 22-Jan-2026
+  - img
+  - text: Total Employees
+  - img "empStats"
+  - text: 59 Employee Stats
+  - img "userStat"
+  - text: 0 Verified
+  - img "verified0"
+  - text: 0 Unverified
+  - img "not_verified1"
+  - text: 0 Deactivated
+  - img "inactive2"
+  - text: "0"
+  - img: Total Unique Login 2
+  - text: Successful Attempts 4
+  - img "info icon"
+  - text: Failed Attempts 12
+  - img "info icon"
+  - text: Exempted Employees 2 Retained Entities 31 Deleted Entities 7 Excused Entities 1 Live Streaming 5 Emotion Detection
+  - img
+  - text: Happy 1
+  - img "info icon"
+  - text: Sad 2
+  - img "info icon"
+  - text: Anger 0
+  - img "info icon"
+  - text: Fear 0
+  - img "info icon"
+  - text: Others 3
+  - img "info icon"
+  - text: On Demand Media
+  - img
+  - text: Video 5
+  - img "info icon"
+  - text: Image 0
+  - img "info icon"
+  - text: Audio 3
+  - img "info icon"
+  - text: Hand gesture 2
+  - img: Call Like Dislike Fist Ok Peace Mute Distress 0 0.5 1 1.5 2
+  - text: Face Detection Analytics 16
+  - img
+  - text: 25.00%
+  - img "utility"
+  - img: 22-Jan-2026 22-Jan-2026 22-Jan-2026 22-Jan-2026 22-Jan-2026 22-Jan-2026 0 1 2 3 4
+  - list:
+    - listitem:
+      - img
+      - text: Successful Attempts
+    - listitem:
+      - img
+      - text: Failed Attempts
+- text: 22-Jan-2026
+```

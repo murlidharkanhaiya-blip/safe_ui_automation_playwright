@@ -1,0 +1,7 @@
+🎯 Applying filter: Inactive
+✅ Filter "Inactive" applied successfully.
+🎯 Applying filter: Uninstalled
+✅ Filter "Uninstalled" applied successfully.
+🎯 Applying filter: All
+✅ Filter "All" applied successfully.
+✅ Test completed and browser closed after verification.
