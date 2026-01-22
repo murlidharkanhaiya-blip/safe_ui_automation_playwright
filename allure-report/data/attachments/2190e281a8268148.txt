@@ -1,0 +1,52 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📊 Looking for Excused Entities card...
+🔍 Found 1 Excused Entities card(s)
+✅ Clicked Excused Entities card
+⏳ Loader hidden
+📊 Found 2 row(s)
+🎯 Applying filter: Windows
+🔧 Opening filter...
+📋 Opening Channel dropdown...
+✅ Selected "Windows"
+✔️ Clicking Apply...
+✅ Filter "Windows" applied
+⏳ Loader hidden
+✅ Filter "Windows" applied successfully
+🎯 Applying filter: Android
+🔧 Opening filter...
+📋 Opening Channel dropdown...
+✅ Selected "Android"
+✔️ Clicking Apply...
+✅ Filter "Android" applied
+⏳ Loader hidden
+✅ Filter "Android" applied successfully
+🎯 Applying filter: Chromebook
+🔧 Opening filter...
+📋 Opening Channel dropdown...
+✅ Selected "Chromebook"
+✔️ Clicking Apply...
+✅ Filter "Chromebook" applied
+⏳ Loader hidden
+✅ Filter "Chromebook" applied successfully
+🎯 Applying filter: Macos
+🔧 Opening filter...
+📋 Opening Channel dropdown...
+✅ Selected "Macos"
+✔️ Clicking Apply...
+✅ Filter "Macos" applied
+⏳ Loader hidden
+✅ Filter "Macos" applied successfully
+🎉 Filters tested: 4/4 applied successfully
+✅ Test completed and browser closed after verification.

@@ -1,0 +1,36 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+⚙️ Clicking Settings icon...
+✅ Clicked Settings
+📋 Clicking Other tab...
+✅ Other tab opened
+✅ Other settings form loaded
+✏️ Setting Calendar Expiration Date Range to: 30
+✅ Calendar Expiration Date Range set to: 30
+✏️ Setting Bulk Upload Limit to: 200
+✅ Bulk Upload Limit set to: 200
+🔘 Toggling Workday Integration...
+✅ Workday Integration toggled
+🔘 Toggling Track Employee Location...
+✅ Track Employee Location toggled
+🔘 Toggling Auto Refresh...
+✅ Auto Refresh toggled
+💾 Clicking Save button...
+✅ Save button clicked
+✔️ Waiting for confirmation popup...
+📋 Confirmation popup appeared
+✅ Popup SAVE clicked
+⏳ Loader hidden
+✅ Settings saved
+🎉 Other settings updated successfully!
+✅ Test completed and browser closed after export.

@@ -1,0 +1,35 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📊 Clicking Retain Entity card...
+✅ Retain Entity card clicked
+⏳ Loader hidden
+🎥 Clicking Video tab...
+✅ Video tab clicked
+⏳ Loader hidden
+👁️ Clicking View icon...
+✅ View icon clicked
+⏳ Loader hidden
+📂 Clicking drilldown...
+✅ Drilldown clicked
+🗑️ Looking for delete retained video icons...
+🔍 Found 2 delete retained video icon(s)
+✅ Delete icon clicked
+✔️ Confirming deletion...
+✅ Deletion confirmed
+✅ Confirmation popup closed
+✅ Retained video deleted (no explicit confirmation)
+📊 Retained videos after deletion: 1
+✅ Retained video successfully deleted
+🎉 Delete retained video completed successfully!
+✅ Test completed and browser closed after verification.

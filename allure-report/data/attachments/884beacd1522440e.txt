@@ -1,2 +1,0 @@
-✅ Filter "Last 30 days" applied successfully.
-✅ Test completed and browser closed after verification.

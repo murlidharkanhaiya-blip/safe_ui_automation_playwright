@@ -1,0 +1,25 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📂 Navigating to Batch Scheduling...
+✅ Clicked Batch Scheduling
+⏳ Loader hidden
+🎯 Selected Job:
+        Job Name: Deactivateemp_1769100541669
+        Created By: Admin.Ilabs
+🔎 Searching by Job Name: "Deactivateemp_1769100541669"
+⏳ Loader hidden
+🔎 Searching by Created By: "Admin.Ilabs"
+⏳ Loader hidden
+🎉 All Batch Scheduling searches completed successfully!
+✅ Test completed and browser closed after search.

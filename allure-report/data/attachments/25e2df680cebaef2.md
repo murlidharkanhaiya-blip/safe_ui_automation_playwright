@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- img "logo"
+- text: SAFE iLabs
+- searchbox "Search by Emp. Name/ID"
+- img "search"
+- img "logo"
+- text: "3 AI admin.ilabs Last Login: 22-Jan-2026, 10:29 PM"
+- list:
+  - listitem:
+    - link:
+      - /url: /dashboard
+      - img
+  - listitem:
+    - link:
+      - /url: /employees
+      - img
+  - listitem:
+    - link:
+      - /url: /bulk-upload
+      - img
+  - listitem:
+    - link:
+      - /url: /users
+      - img
+  - listitem:
+    - link:
+      - /url: /live-streaming
+      - img
+  - listitem:
+    - link:
+      - /url: /screenlock/pending
+      - img
+  - listitem:
+    - link:
+      - /url: /batch-scheduling
+      - img
+  - listitem:
+    - link:
+      - /url: /utility-updates/windows
+      - img
+  - listitem:
+    - link:
+      - /url: /activity-logs
+      - img
+- list:
+  - listitem:
+    - link:
+      - /url: /settings/image_general_setting
+      - img
+- main:
+  - list:
+    - listitem:
+      - img "root-icon"
+      - text: Dashboard
+    - listitem:
+      - img "next-icon"
+      - text: Emotion Detection
+  - img
+  - heading "Emotion Detection (2)" [level=4]
+  - heading [level=6]
+  - button:
+    - img
+  - img "Filter"
+  - text: Search by
+  - img "dropdown"
+  - searchbox "Search"
+  - img "search"
+  - text: Images Videos active 03/01/2026 - 22/01/2026
+  - table "sticky table":
+    - rowgroup:
+      - row "Emp ID Emp Name Email ID Emotion Capture Attempts Channel View":
+        - columnheader "Emp ID"
+        - columnheader "Emp Name"
+        - columnheader "Email ID"
+        - columnheader "Emotion Capture Attempts"
+        - columnheader "Channel"
+        - columnheader "View"
+    - rowgroup:
+      - checkbox "145672 Murli Kumar murlidhar.kanhaiya@telusinternational.com 6 Windows View Employee Details":
+        - cell "145672"
+        - cell "Murli Kumar"
+        - cell "murlidhar.kanhaiya@telusinternational.com"
+        - cell "6"
+        - cell "Windows"
+        - cell "View Employee Details":
+          - img "View Employee Details"
+      - checkbox "XIND17934 Rohit Bhadouriya rohit.bhadouriya@telusinternational.com 3 Android View Employee Details":
+        - cell "XIND17934"
+        - cell "Rohit Bhadouriya"
+        - cell "rohit.bhadouriya@telusinternational.com"
+        - cell "3"
+        - cell "Android"
+        - cell "View Employee Details":
+          - img "View Employee Details"
+  - list:
+    - listitem:
+      - link "Go to first page":
+        - /url: "#"
+        - text: First
+    - listitem:
+      - link "Go to previous page":
+        - /url: "#"
+    - listitem:
+      - link "Go to page number 1":
+        - /url: "#"
+        - text: "1"
+    - listitem:
+      - link "Go to next page":
+        - /url: "#"
+    - listitem:
+      - link "Go to last page":
+        - /url: "#"
+        - text: Last
+  - text: Showing 1 to 2 of 2 Records | Rows Per Page
+  - textbox "Select": "10"
+- text: "8"
+```

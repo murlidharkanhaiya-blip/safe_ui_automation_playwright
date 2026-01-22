@@ -1,7 +1,0 @@
-🎯 Applying filter: Successful
-✅ Filter "Successful" applied successfully.
-🎯 Applying filter: Partially Successful
-✅ Filter "Partially Successful" applied successfully.
-🎯 Applying filter: Failed
-✅ Filter "Failed" applied successfully.
-✅ Test completed and browser closed after verification.

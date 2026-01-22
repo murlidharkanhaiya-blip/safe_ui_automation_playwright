@@ -1,0 +1,30 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📂 Navigating to Batch Scheduling...
+✅ Clicked Batch Scheduling (sidebar)
+⏳ Loader hidden
+✅ Clicked Monthly Mail tab
+📊 Found 3 schedule(s)
+🔍 Found 1 edit icon(s)
+📝 Editing first schedule
+✏️ Clicking Edit button...
+✅ Edit button clicked
+📅 Selecting date range...
+✅ Date range 'Next 7 Days' selected
+💾 Saving changes...
+✅ Save button clicked
+⏳ Loader hidden
+✅ Schedule updated
+🎉 Schedule "Unknown" edited successfully!
+✅ Test completed and browser closed after verification.

@@ -1,4 +1,0 @@
-✅ Employee table & action icon loaded
-🔹 Clicking 'Retain All Images' at index: 2
-✅ Image retention flow completed successfully.
-✅ Test completed and browser closed after verification.

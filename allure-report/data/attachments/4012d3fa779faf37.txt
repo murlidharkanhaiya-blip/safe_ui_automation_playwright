@@ -1,4 +1,0 @@
-⏳ Waiting for 'Completed' tab to appear...
-✅ Clicked on 'Completed' tab.
-✅ Export success message appeared and screenshot taken.
-✅ Test completed and browser closed after export.

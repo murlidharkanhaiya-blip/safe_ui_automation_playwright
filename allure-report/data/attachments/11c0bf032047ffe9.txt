@@ -1,3 +1,0 @@
-✅ Employee ID search result check success for "145672"
-✅ Employee Name search result check success for "Murli Kumar"
-✅ Employee Email search result check success for "murlidhar.kanhaiya@telusinternational.com"

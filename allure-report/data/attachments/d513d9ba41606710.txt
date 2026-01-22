@@ -1,7 +1,0 @@
-🎯 Applying filter: Uninstalled
-✅ Filter "Uninstalled" applied successfully.
-🎯 Applying filter: Stopped
-✅ Filter "Stopped" applied successfully.
-🎯 Applying filter: All
-✅ Filter "All" applied successfully.
-✅ Test completed and browser closed after verification.

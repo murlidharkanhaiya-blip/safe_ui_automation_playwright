@@ -1,3 +1,0 @@
-🎯 Applying filter: Android
-✅ Filter "Android" applied successfully.
-🎯 Applying filter: Chrome-Book

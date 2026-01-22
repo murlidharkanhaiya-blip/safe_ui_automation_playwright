@@ -1,3 +1,0 @@
-❗ Employee ID search success: "110065" visible in results.
-❗ Employee Name search success: "Narender Testuser" visible in results.
-❗ Employee Email search success: "automation.user29264@telusinternational.com" visible in results.

@@ -1,0 +1,31 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📊 Looking for Total Unique Login card...
+✅ Clicked Total Unique Login card
+⏳ Loader hidden
+✅ Found 3 table rows
+🔍 Looking for View Employee Details icon...
+✅ Clicked View Employee Details
+⏳ Loader hidden
+📂 Looking for drilldown...
+✅ Clicked drilldown
+🗑️ Looking for delete image icons...
+🔍 Found 9 delete image icons
+✅ Clicked delete image icon
+✍️ Entering deletion remark...
+✅ Entered deletion remark
+🗑️ Clicking DELETE button...
+✅ Clicked DELETE button
+⏳ Loader hidden
+ Image deletion completed successfully!
+✅ Test completed and browser closed after verification.

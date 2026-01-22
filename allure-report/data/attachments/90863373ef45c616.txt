@@ -1,2 +1,0 @@
-🎉 Filter 'Last 90 Days' applied successfully.
-✅ Test completed and browser closed after verification.

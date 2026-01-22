@@ -1,7 +1,0 @@
-🎯 Applying filter: Unverified
-✅ Filter "Unverified" applied successfully.
-🎯 Applying filter: Deactivated
-✅ Filter "Deactivated" applied successfully.
-🎯 Applying filter: All
-✅ Filter "All" applied successfully.
-✅ Test completed and browser closed after verification.

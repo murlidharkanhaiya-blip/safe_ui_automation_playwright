@@ -1,3 +1,0 @@
-✅ Employee ID search success for "145672" and verification pass
-✅ Employee Name search success for "Murli Kumar" and verification pass
-✅ Employee Email search success for "murlidhar.kanhaiya@telusinternational.com" and verification pass

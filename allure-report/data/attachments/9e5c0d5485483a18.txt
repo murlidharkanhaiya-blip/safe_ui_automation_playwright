@@ -1,8 +1,0 @@
-🔍 Picked Random Employee:
-    ID: 145672
-    Name: Murli Kumar
-    Email: murlidhar.kanhaiya@telusinternational.com
-✅ Employee ID Search Passed
-✅ Employee Name Search Passed
-✅ Employee Email Search Passed
-✅ Test completed and browser closed after search.
