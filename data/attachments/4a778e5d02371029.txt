@@ -1,0 +1,28 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📂 Navigating to Activity Logs...
+✅ Clicked Activity Logs
+⏳ Loader hidden
+🎯 Selected Employee:
+        ID: XIND17934
+        Name: Rohit Bhadouriya
+        Email: rohit.bhadouriya@telusinternational.com
+🔎 Searching by Employee ID: "XIND17934"
+⏳ Loader hidden
+🔎 Searching by Employee Name: "Rohit Bhadouriya"
+⏳ Loader hidden
+🔎 Searching by Employee Email: "rohit.bhadouriya@telusinternational.com"
+⏳ Loader hidden
+🎉 All Activity Log searches completed successfully!
+✅ Test completed and browser closed after search.

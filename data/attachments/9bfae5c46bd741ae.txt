@@ -1,0 +1,31 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+⚙️ Clicking Settings icon...
+✅ Clicked Settings
+🖼️ Waiting for Image settings form...
+✅ Image settings form loaded
+✏️ Setting Retain Image Expiration to: 120
+✅ Retain Image Expiration set to: 120
+✏️ Setting Matched Image Expiration to: 130
+✅ Matched Image Expiration set to: 130
+✏️ Setting Unmatched Image Expiration to: 140
+✅ Unmatched Image Expiration set to: 140
+💾 Clicking Save button...
+✅ Save button clicked
+✔️ Waiting for confirmation popup...
+📋 Confirmation popup appeared
+✅ Popup SAVE clicked
+⏳ Loader hidden
+✅ Settings saved
+🎉 Image settings updated successfully!
+✅ Test completed and browser closed after export.

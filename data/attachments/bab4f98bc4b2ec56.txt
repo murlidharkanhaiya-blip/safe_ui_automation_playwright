@@ -1,0 +1,34 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+⚙️ Clicking Settings icon...
+✅ Clicked Settings
+🔊 Clicking Audio tab...
+✅ Audio tab opened
+✅ Audio settings form loaded
+✏️ Updating Recorded Noise Expiration...
+  Current value: 91
+  New value: 92
+✅ Recorded Noise Expiration updated to: 92
+✏️ Updating Retained Noise Expiration...
+  Current value: 91
+  New value: 92
+✅ Retained Noise Expiration updated to: 92
+💾 Clicking Save button...
+✅ Save button clicked
+✔️ Waiting for confirmation popup...
+📋 Confirmation popup SAVE button visible
+✅ Popup SAVE clicked
+⏳ Loader hidden
+✅ Settings saved
+🎉 Audio settings updated! Recorded: 92, Retained: 92
+✅ Test completed and browser closed after export.

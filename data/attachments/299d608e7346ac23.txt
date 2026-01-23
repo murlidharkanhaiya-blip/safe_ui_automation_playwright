@@ -1,0 +1,40 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📊 Looking for Utility Stats...
+✅ Clicked Utility Stats
+⏳ Loader hidden
+📊 Found 2 row(s)
+🎯 Applying filter: Inactive
+🔧 Opening filter...
+📋 Opening Status dropdown...
+✅ Selected "Inactive"
+✔️ Clicking Apply...
+✅ Filter "Inactive" applied
+⏳ Loader hidden
+✅ Filter "Inactive" applied successfully
+🎯 Applying filter: Uninstalled
+🔧 Opening filter...
+📋 Opening Status dropdown...
+✅ Selected "Uninstalled"
+✔️ Clicking Apply...
+✅ Filter "Uninstalled" applied
+⏳ Loader hidden
+✅ Filter "Uninstalled" applied successfully
+🎯 Applying filter: All
+🔧 Opening filter...
+📋 Opening Status dropdown...
+✅ Selected "All"
+✔️ Clicking Apply...
+🎉 Filters tested: 2/3 applied successfully
+✅ Test completed and browser closed after verification.

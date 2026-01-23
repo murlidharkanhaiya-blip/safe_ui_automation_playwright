@@ -1,0 +1,39 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+⚙️ Clicking Settings icon...
+✅ Clicked Settings
+🔧 Clicking Utility Settings tab...
+✅ Utility Settings tab clicked
+📸 Clicking Image Capture Settings...
+✅ Image Capture Settings clicked
+📋 Selecting Business Group...
+✅ Selected: Intensive Watch
+📊 Image Capture Frequency (not changing)...
+✏️ Setting Capture Wait Duration to: 20
+✅ Capture Wait Duration set to: 20
+✏️ Setting Suspicious Capture Interval to: 115
+✅ Suspicious Capture Interval set to: 115
+🔘 Toggling Image On Demand...
+✅ Image On Demand toggled
+🔘 Toggling Allow Screen Lock...
+✅ Allow Screen Lock toggled
+💾 Clicking Save button...
+✅ Save button clicked
+✔️ Waiting for confirmation popup...
+📋 Confirmation popup appeared
+✅ Popup SAVE clicked
+⏳ Loader hidden
+✅ Settings saved
+🎉 Utility Settings - Image Capture updated successfully!
+✅ Test completed and browser closed after verification.

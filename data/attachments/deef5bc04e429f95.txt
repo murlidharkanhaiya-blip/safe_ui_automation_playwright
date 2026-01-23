@@ -1,0 +1,22 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📂 Navigating to Bulk Upload...
+✅ Clicked Bulk Upload
+⏳ Loader hidden
+📤 Preparing file upload...
+📁 File path: D:\Playwright_Safe_Automation_VscodeExt\tests\TestData_File\sample_file_bulkupload_sample (1).csv
+📤 Upload attempt 1/3...
+✅ File uploaded (no explicit confirmation)
+🎉 Bulk upload completed successfully!
+✅ Test completed and browser closed after export.

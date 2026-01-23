@@ -1,0 +1,31 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📊 Looking for On Demand Media card...
+✅ Clicked On Demand Media card
+⏳ Loader hidden
+📋 Clicking Completed tab...
+✅ Completed tab clicked
+⏳ Loader hidden
+🖼️ Clicking Image tab...
+✅ Image tab clicked
+🔍 Checking for data in Completed > Image tab...
+📊 Found 3 row(s)
+🔍 Found 1 View icon(s)
+👁️ Clicking View Employee Details...
+✅ View icon clicked
+⏳ Loader hidden
+📂 Clicking drilldown...
+✅ Drilldown clicked
+🖼️ Clicking 'Click to view image'...
+✅ Test completed and browser closed after verification.

@@ -1,0 +1,276 @@
+# Page snapshot
+
+```yaml
+- img "logo"
+- text: SAFE iLabs
+- searchbox "Search by Emp. Name/ID"
+- img "search"
+- img "logo"
+- text: "3 AI admin.ilabs Last Login: 22-Jan-2026, 10:54 PM"
+- list:
+  - listitem:
+    - link:
+      - /url: /dashboard
+      - img
+  - listitem:
+    - link:
+      - /url: /employees
+      - img
+  - listitem:
+    - link:
+      - /url: /bulk-upload
+      - img
+  - listitem:
+    - link:
+      - /url: /users
+      - img
+  - listitem:
+    - link:
+      - /url: /live-streaming
+      - img
+  - listitem:
+    - link:
+      - /url: /screenlock/pending
+      - img
+  - listitem:
+    - link:
+      - /url: /batch-scheduling
+      - img
+  - listitem:
+    - link:
+      - /url: /utility-updates/windows
+      - img
+  - listitem:
+    - link:
+      - /url: /activity-logs
+      - img
+- list:
+  - listitem:
+    - link:
+      - /url: /settings/image_general_setting
+      - img
+- text: Manage Employees
+- main:
+  - heading "Manage Employees" [level=4]
+  - heading [level=6]
+  - button:
+    - img
+  - img "Filter"
+  - text: Search by
+  - img "dropdown"
+  - searchbox "Search"
+  - img "search"
+  - button "Add Employee":
+    - img
+    - text: Add Employee
+  - text: verified
+  - img
+  - table "sticky table":
+    - rowgroup:
+      - row "Emp ID Emp Name Email ID Group Manager Sr. Manager Images(1,2,3) Action":
+        - columnheader "Emp ID"
+        - columnheader "Emp Name"
+        - columnheader "Email ID"
+        - columnheader "Group"
+        - columnheader "Manager"
+        - columnheader "Sr. Manager"
+        - columnheader "Images(1,2,3)"
+        - columnheader "Action"
+    - rowgroup:
+      - checkbox "xav3232 PlayWright_test13232 playwright_test3232@telusinternational.com Default rohit Edit Deactivate Employee":
+        - cell "xav3232"
+        - cell "PlayWright_test13232"
+        - cell "playwright_test3232@telusinternational.com"
+        - cell "Default"
+        - cell "rohit"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button [disabled]:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "10235355rty Rohit testuser2 rohit.bhadouriya+34@telusinternational.com Default Rohit Bhadouriya Edit Deactivate Employee":
+        - cell "10235355rty"
+        - cell "Rohit testuser2"
+        - cell "rohit.bhadouriya+34@telusinternational.com"
+        - cell "Default"
+        - cell "Rohit Bhadouriya"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button:
+            - button
+          - button:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "23456uui Rohit MacOS rohit.bhadouriya+1@telusdigital.com Default Syed Ali Edit Deactivate Employee":
+        - cell "23456uui"
+        - cell "Rohit MacOS"
+        - cell "rohit.bhadouriya+1@telusdigital.com"
+        - cell "Default"
+        - cell "Syed Ali"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button [disabled]:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "10194184 Nalini nalini.kumari@telusinternational.com Default Syed Ali Edit Deactivate Employee":
+        - cell "10194184"
+        - cell "Nalini"
+        - cell "nalini.kumari@telusinternational.com"
+        - cell "Default"
+        - cell "Syed Ali"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button [disabled]:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "970080 Zillow4 murlidhar.kanhaiya+4@telusinternational.com Default Rohit Edit Deactivate Employee":
+        - cell "970080"
+        - cell "Zillow4"
+        - cell "murlidhar.kanhaiya+4@telusinternational.com"
+        - cell "Default"
+        - cell "Rohit"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button [disabled]:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "XAV465543 zillo3 murlidhar.kanhaiya+23@telusinternational.com Default ali Edit Deactivate Employee":
+        - cell "XAV465543"
+        - cell "zillo3"
+        - cell "murlidhar.kanhaiya+23@telusinternational.com"
+        - cell "Default"
+        - cell "ali"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "10194184y Rohit 17 rohit.bhadouriya+17@telusinternational.com Default Syed Ali Edit Deactivate Employee":
+        - cell "10194184y"
+        - cell "Rohit 17"
+        - cell "rohit.bhadouriya+17@telusinternational.com"
+        - cell "Default"
+        - cell "Syed Ali"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "123293892 mohd razi ahmad mohdrazi.ahmad@telusinternational.com Default Rohit Bhadouriya Edit Deactivate Employee":
+        - cell "123293892"
+        - cell "mohd razi ahmad"
+        - cell "mohdrazi.ahmad@telusinternational.com"
+        - cell "Default"
+        - cell "Rohit Bhadouriya"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button [disabled]:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "21312321 AKCHANSH SHRIVASTAVA rohit.bhadouriya+112@telusinternational.com Default Syed Ali Edit Deactivate Employee":
+        - cell "21312321"
+        - cell "AKCHANSH SHRIVASTAVA"
+        - cell "rohit.bhadouriya+112@telusinternational.com"
+        - cell "Default"
+        - cell "Syed Ali"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button [disabled]:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+      - checkbox "110065 Narender Testuser automation.user29264@telusinternational.com Default Rohit Edit Deactivate Employee":
+        - cell "110065"
+        - cell "Narender Testuser"
+        - cell "automation.user29264@telusinternational.com"
+        - cell "Default"
+        - cell "Rohit"
+        - cell
+        - cell:
+          - button:
+            - button
+          - button [disabled]:
+            - button
+          - button [disabled]:
+            - button
+        - cell "Edit Deactivate Employee":
+          - img "Edit"
+          - img "Deactivate Employee"
+  - list:
+    - listitem:
+      - link "Go to first page":
+        - /url: "#"
+        - text: First
+    - listitem:
+      - link "Go to previous page":
+        - /url: "#"
+    - listitem:
+      - link "Go to page number 1":
+        - /url: "#"
+        - text: "1"
+    - listitem:
+      - link "Go to page number 2":
+        - /url: "#"
+        - text: "2"
+    - listitem:
+      - link "Go to next page":
+        - /url: "#"
+    - listitem:
+      - link "Go to last page":
+        - /url: "#"
+        - text: Last
+  - text: Showing 1 to 10 of 20 Records | Rows Per Page
+  - textbox "Select": "10"
+- text: "8"
+```

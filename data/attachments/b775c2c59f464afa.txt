@@ -1,0 +1,24 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+🔍 Picked Random Employee:
+        ID: 10235355rty
+        Name: Rohit Testuser2
+        Email: rohit.bhadouriya+34@telusinternational.com
+        Manager: Rohit Bhadouriya
+        Senior Manager: 
+✅ Employee ID Search Verified: 10235355rty
+✅ Employee Name Search Verified: Rohit Testuser2
+✅ Employee Email Search Verified: rohit.bhadouriya+34@telusinternational.com
+✅ Manager Search Verified: Rohit Bhadouriya
+✅ Senior Manager Search Verified: 
+✅ Test completed and browser closed after search.

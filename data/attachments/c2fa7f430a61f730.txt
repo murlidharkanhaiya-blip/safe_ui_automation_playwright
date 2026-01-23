@@ -1,0 +1,34 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📂 Navigating to Batch Scheduling...
+✅ Clicked Batch Scheduling
+⏳ Loader hidden
+🆕 Creating new scheduler...
+✅ Scheduler Name: bucketcleaner_1769100501752
+📅 Selecting date range...
+✅ Date range 'Tomorrow' selected
+⏱️ Selecting duration...
+  Selecting Duration: Daily
+✅ Duration selected
+🔢 Selecting occurrences...
+  Selecting Occurrence: Twice
+✅ Occurrences selected
+🌍 Selecting timezone...
+✅ Timezone selected: India Standard Time
+💾 Saving scheduler...
+✅ Save button clicked
+⏳ Loader hidden
+✅ Scheduler saved (no explicit success message)
+🎉 Batch Scheduling job created successfully!
+✅ Test completed and browser closed after verification.
