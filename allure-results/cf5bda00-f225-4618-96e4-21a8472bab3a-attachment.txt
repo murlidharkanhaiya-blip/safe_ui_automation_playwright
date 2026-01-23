@@ -1,0 +1,35 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📊 Looking for Excused Entities card...
+🔍 Found 1 Excused Entities card(s)
+✅ Clicked Excused Entities card
+⏳ Loader hidden
+🎥 Looking for Video tab...
+🔍 Found 1 video tab(s)
+✅ Clicked Video tab
+⏳ Loader hidden
+📊 Found 2 row(s) in Video tab
+👁️ Looking for View icon...
+🔍 Found 1 view icon(s)
+✅ Clicked View icon
+⏳ Loader hidden
+📤 Looking for Export button...
+🔍 Found 1 export button(s)
+✅ Clicked Export button
+📄 Looking for CSV option...
+🔍 Found 1 CSV option(s)
+✅ Clicked CSV
+✉️ Waiting for success message...
+🎉 Export report flow completed!
+✅ Test completed and browser closed after export.

@@ -1,0 +1,30 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📊 Clicking Suspicious Activities card...
+✅ Suspicious Activities card clicked
+⏳ Loader hidden
+🎥 Clicking Video tab...
+✅ Video tab clicked
+⏳ Loader hidden
+👁️ Clicking View Employee Details...
+✅ View icon clicked
+⏳ Loader hidden
+📂 Clicking drilldown...
+✅ Drilldown clicked
+🔍 Checking for 'Mark as unsuspicious' icons...
+🔍 Found 2 'Mark as unsuspicious' icon(s)
+✅ Clicking 'Mark as unsuspicious'...
+✅ 'Mark as unsuspicious' clicked
+📋 Selecting reason...
+✅ Test completed and browser closed after verification.

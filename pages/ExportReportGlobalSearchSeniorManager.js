@@ -12,11 +12,11 @@ class ExportReportGlobalSearchSeniorManager {
         this.exporticon = page.locator("(//button[@data-testid='export-report'])[1]");
         this.csvbutton = page.locator("(//a[normalize-space()='CSV'])[1]");
         this.successToast = page.locator("//div[contains(text(),'Report has been sent to your email')]");
-        this.hardcodedName = page.locator("(//div[@title='Alex Hales'])[1]"); 
+        this.hardcodedName = page.locator("(//div[@title='Murli'])[1]"); 
     }
 
     async searchEmployeeByName() {
-        const prefix = 'roh';
+        const prefix = 'syed';
         const searchInput = this.page.locator(this.globalSearchInput);
 
         // Step 1: Fill the input and click search icon

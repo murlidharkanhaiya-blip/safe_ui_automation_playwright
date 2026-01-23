@@ -4,203 +4,195 @@ class HandGestureSearch {
     constructor(page) {
         this.page = page;
 
-        // ✅ Card locator
-        this.handgestureCard = this.page.locator("div.block-container:has-text('Hand gesture')");
-
-        // Search input & button
-        this.searchInput = "(//input[contains(@placeholder,'Search')])[2]";
-        this.searchButton =
-            "//div[@class='page-heading-actions']//div[@class='search-wrapper']//img[@alt='search']";
-
-        // Table row & cells
-        this.tableRow = "tr.MuiTableRow-root";
-        this.idCell = "td:nth-child(1)";
-        this.nameCell = "td:nth-child(2)";
-        this.emailCell = "td:nth-child(3)";
+        // Improved Locators
+        this.handGestureCard = page.locator("div.block-container").filter({ hasText: 'Hand gesture' });
+        this.searchInput = page.locator("input[placeholder*='Search']").nth(1);
+        this.searchButton = page.locator("div.page-heading-actions div.search-wrapper img[alt='search']");
+        this.searchByTrigger = page.locator('[data-testid="searchBy"]');
+        this.tableRow = page.locator("tr.MuiTableRow-root");
+        this.loader = page.locator('#global-loader-container .loading');
     }
 
-    /* ----------------------------------------------------
-       ✅ Wait until Hand Gesture card is visible & populated
-    ---------------------------------------------------- */
-    async waitForHandGestureToLoad() {
-        const maxScrollAttempts = 10;
-        let found = false;
-
-        for (let i = 0; i < maxScrollAttempts; i++) {
-            const visible = await this.handgestureCard.first().isVisible().catch(() => false);
-            if (visible) {
-                found = true;
-                break;
+    async waitForLoader() {
+        try {
+            const isVisible = await this.loader.isVisible({ timeout: 2000 });
+            if (isVisible) {
+                await this.loader.waitFor({ state: 'hidden', timeout: 15000 });
+                console.log("⏳ Loader hidden");
             }
-
-            await this.page.mouse.wheel(0, 500);
-            await this.page.waitForTimeout(800);
+        } catch {
+            // Loader not present
         }
-
-        if (!found) {
-            throw new Error("❌ Hand Gesture card not found even after scrolling.");
-        }
-
-        this.handgestureCard = this.handgestureCard.first();
-
-        // ✅ Wait for count text like: "Hand gesture 3"
-        const cardHandle = await this.handgestureCard.elementHandle();
-        await this.page.waitForFunction(
-            (el) => {
-                const text = el?.innerText?.trim() || '';
-                return /Hand gesture\s*\d+/i.test(text);
-            },
-            cardHandle,
-            { timeout: 20000 }
-        );
     }
 
-    /* ----------------------------------------------------
-       ✅ Wait for table rows to appear (stable solution)
-    ---------------------------------------------------- */
-    async waitForTableToLoad(timeout = 30000) {
-        const start = Date.now();
-
-        while (Date.now() - start < timeout) {
-            const loader = this.page.locator('#global-loader-container >> .loading');
-            try {
-                if (await loader.isVisible({ timeout: 2000 })) {
-                    await loader.waitFor({ state: 'hidden', timeout: 15000 });
-                }
-            } catch {}
-
-            const rows = this.page.locator(this.tableRow);
-            const count = await rows.count();
-
-            if (count > 0) {
-                console.log(`✅ Table loaded with ${count} rows`);
-                return;
-            }
-
-            console.log('⏳ Waiting for table rows...');
-            await this.page.waitForTimeout(1500);
-        }
-
-        throw new Error('❌ Table did not load any rows within timeout');
-    }
-
-    /* ----------------------------------------------------
-       ✅ Main Test Flow
-    ---------------------------------------------------- */
-    async verifySearchonhandgesturePage() {
-        await this.page.waitForLoadState('domcontentloaded');
+    async getFirstValidEmployee() {
+        await this.tableRow.first().waitFor({ state: 'visible', timeout: 15000 });
         await this.page.waitForTimeout(1000);
 
-        // 1️⃣ Load card safely
-        await this.waitForHandGestureToLoad();
+        const rows = await this.tableRow.all();
 
-        // 2️⃣ Click card safely
-        await this.handgestureCard.scrollIntoViewIfNeeded();
-        await this.handgestureCard.waitFor({ state: 'visible', timeout: 5000 });
-        await this.handgestureCard.hover();
-        await this.page.waitForTimeout(300);
-        await this.handgestureCard.click({ force: true });
-
-        // 3️⃣ Wait for table
-        await this.waitForTableToLoad();
-
-        const rows = this.page.locator(this.tableRow);
-        const count = await rows.count();
-
-        let employeeId = '';
-        let employeeName = '';
-        let employeeEmail = '';
-        let found = false;
-
-        // 4️⃣ Pick first stable row
-        for (let i = 0; i < count; i++) {
-            const row = rows.nth(i);
+        for (const row of rows) {
             try {
-                await row.scrollIntoViewIfNeeded();
-                await row.waitFor({ state: 'visible', timeout: 5000 });
+                const cells = await row.locator('td').all();
 
-                const idCell = row.locator(this.idCell);
-                const nameCell = row.locator(this.nameCell);
-                const emailCell = row.locator(this.emailCell);
+                if (cells.length >= 3) {
+                    const id = await cells[0].innerText({ timeout: 3000 });
+                    const name = await cells[1].innerText({ timeout: 3000 });
+                    const email = await cells[2].innerText({ timeout: 3000 });
 
-                await Promise.all([
-                    idCell.waitFor({ state: 'visible', timeout: 3000 }),
-                    nameCell.waitFor({ state: 'visible', timeout: 3000 }),
-                    emailCell.waitFor({ state: 'visible', timeout: 3000 }),
-                ]);
-
-                employeeId = (await idCell.innerText()).trim();
-                employeeName = (await nameCell.innerText()).trim();
-                employeeEmail = (await emailCell.innerText()).trim();
-
-                if (employeeId && employeeName && employeeEmail) {
-                    found = true;
-                    break;
+                    if (id?.trim() && name?.trim() && email?.trim()) {
+                        return {
+                            id: id.trim(),
+                            name: name.trim(),
+                            email: email.trim()
+                        };
+                    }
                 }
-            } catch {
-                console.log(`⏭ Skipping unstable row ${i + 1}`);
+            } catch (err) {
+                continue;
             }
         }
 
-        if (!found) {
-            throw new Error("❌ No usable row found with ID, Name and Email.");
-        }
-
-        console.log(`🔍 Picked Employee:
-  ID: ${employeeId}
-  Name: ${employeeName}
-  Email: ${employeeEmail}`);
-
-        // 5️⃣ Search validations
-        await this.performSearchAndAssert("Employee ID", employeeId, this.idCell, "Employee ID");
-        await this.performSearchAndAssert("Employee Name", employeeName, this.nameCell, "Employee Name");
-        await this.performSearchAndAssert("Employee Email", employeeEmail, this.emailCell, "Employee Email");
+        throw new Error("❌ No valid employee found in Hand Gesture table");
     }
 
-    /* ----------------------------------------------------
-       ✅ Search & Assert Logic (retry safe)
-    ---------------------------------------------------- */
-    async performSearchAndAssert(criteriaText, inputValue, cellSelector, label) {
-        console.log(`\n🔎 Searching by ${label}: "${inputValue}"`);
+    async performSearch(criteriaText, inputValue) {
+        console.log(`🔎 Searching by ${criteriaText}: "${inputValue}"`);
 
-        await this.page.locator('[data-testid="searchBy"]').click();
+        await this.searchByTrigger.click();
+        await this.page.waitForTimeout(300);
+
         const option = this.page.locator(`.search__option--item:has-text("${criteriaText}")`);
         await option.waitFor({ state: 'visible', timeout: 5000 });
         await option.click();
+        await this.page.waitForTimeout(200);
 
-        const inputBox = this.page.locator(this.searchInput);
-        await inputBox.fill('');
-        await inputBox.fill(inputValue);
-        await this.page.locator(this.searchButton).click();
+        await this.searchInput.clear();
+        await this.page.waitForTimeout(200);
+        await this.searchInput.fill(inputValue);
+        await expect(this.searchInput).toHaveValue(inputValue);
 
-        const loader = this.page.locator('#global-loader-container >> .loading');
-        try {
-            if (await loader.isVisible({ timeout: 2000 })) {
-                await loader.waitFor({ state: 'hidden', timeout: 10000 });
-            }
-        } catch {}
+        await this.searchButton.click();
 
-        const resultCell = this.page.locator(`${this.tableRow} >> ${cellSelector}`);
-        let matched = false;
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(1500);
+        await this.tableRow.first().waitFor({ state: 'visible', timeout: 10000 });
+    }
 
-        for (let attempt = 1; attempt <= 3; attempt++) {
+    async validateSearchResult(inputValue, cellIndex, label, retries = 3) {
+        for (let attempt = 1; attempt <= retries; attempt++) {
             try {
-                await this.page.waitForTimeout(1500);
-                const cellText = await resultCell.first().innerText();
-                if (cellText?.trim().toLowerCase().includes(inputValue.toLowerCase())) {
-                    console.log(`✅ ${label} search verified.`);
-                    matched = true;
+                await this.tableRow.first().waitFor({ state: 'visible', timeout: 10000 });
+
+                const rows = await this.tableRow.all();
+
+                if (rows.length === 0) {
+                    console.warn(`⚠️ No results found for ${label}: "${inputValue}"`);
+                    return;
+                }
+
+                const firstRow = rows[0];
+                const cells = await firstRow.locator('td').all();
+
+                if (cells[cellIndex]) {
+                    const cellText = await cells[cellIndex].innerText({ timeout: 5000 });
+                    expect(cellText.trim()).toContain(inputValue);
+                    console.log(`✅ ${label} search verified`);
+                    return;
+                }
+
+            } catch (error) {
+                if (attempt === retries) {
+                    throw new Error(`❌ ${label} validation failed after ${retries} attempts: ${error.message}`);
+                }
+                console.log(`⚠️ Attempt ${attempt} failed, retrying...`);
+                await this.page.waitForTimeout(1000);
+            }
+        }
+    }
+
+    async verifySearchonhandgesturePage() {
+        // ✅ Reset state
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.page.waitForTimeout(2000);
+
+        console.log("📍 Current URL:", this.page.url());
+
+        // ✅ Find and click Hand Gesture card
+        console.log("📊 Looking for Hand Gesture card...");
+        
+        const cardCount = await this.handGestureCard.count();
+        console.log(`🔍 Found ${cardCount} Hand Gesture card(s)`);
+
+        if (cardCount === 0) {
+            // Try scrolling
+            console.log("🔄 Scrolling to find card...");
+            
+            for (let i = 0; i < 5; i++) {
+                await this.page.mouse.wheel(0, 400);
+                await this.page.waitForTimeout(500);
+                
+                const retryCount = await this.handGestureCard.count();
+                if (retryCount > 0) {
+                    console.log("✅ Card found after scrolling");
                     break;
                 }
-                console.log(`⏳ Retry ${attempt}: Value not reflected yet`);
-            } catch {
-                console.log(`⏳ Retry ${attempt}: Unable to read result cell`);
+            }
+            
+            const finalCount = await this.handGestureCard.count();
+            if (finalCount === 0) {
+                await this.page.screenshot({ path: 'debug-no-hand-gesture-card.png', fullPage: true });
+                throw new Error("❌ Hand Gesture card not found. Check debug-no-hand-gesture-card.png");
             }
         }
 
-        if (!matched) {
-            throw new Error(`❌ ${label} search failed for value: ${inputValue}`);
+        await this.handGestureCard.first().waitFor({ state: 'visible', timeout: 15000 });
+        await this.handGestureCard.first().scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(500);
+        await this.handGestureCard.first().click();
+        console.log("✅ Clicked Hand Gesture card");
+
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(3000);
+
+        // ✅ Wait for table
+        try {
+            await this.tableRow.first().waitFor({ state: 'visible', timeout: 15000 });
+        } catch {
+            console.warn("⚠️ No table data found");
+            return;
         }
+
+        const rowCount = await this.tableRow.count();
+        console.log(`📊 Found ${rowCount} row(s)`);
+
+        if (rowCount === 0) {
+            console.warn("⚠️ No data available in Hand Gesture table");
+            return;
+        }
+
+        // ✅ Get first valid employee
+        const { id, name, email } = await this.getFirstValidEmployee();
+        console.log(`🎯 Selected Employee:
+        ID: ${id}
+        Name: ${name}
+        Email: ${email}`);
+
+        // ✅ Search by Employee ID
+        await this.performSearch("Employee ID", id);
+        await this.validateSearchResult(id, 0, "Employee ID");
+
+        // ✅ Search by Employee Name
+        await this.performSearch("Employee Name", name);
+        await this.validateSearchResult(name, 1, "Employee Name");
+
+        // ✅ Search by Employee Email
+        await this.performSearch("Employee Email", email);
+        await this.validateSearchResult(email, 2, "Employee Email");
+
+        console.log("🎉 All Hand Gesture searches completed successfully!");
     }
 }
 

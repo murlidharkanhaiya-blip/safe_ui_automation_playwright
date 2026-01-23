@@ -1,0 +1,30 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📊 Looking for Emotion Detection card...
+🔍 Found 1 Emotion Detection card(s)
+✅ Clicked Emotion Detection card
+⏳ Loader hidden
+👁️ Looking for View Employee Details icon...
+🔍 Found 1 eye icon(s)
+✅ Clicked View Employee Details
+⏳ Loader hidden
+📂 Looking for drilldown...
+🔍 Found 1 drilldown icon(s)
+✅ Clicked drilldown
+🖼️ Looking for 'Click to view image'...
+🔍 Found 1 view image link(s)
+✅ Clicked 'Click to view image'
+ℹ️ Image viewer state unknown
+🎉 Emotion Detection image view completed!
+✅ Test completed and browser closed after verification.

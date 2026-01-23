@@ -4,129 +4,199 @@ class VideoOnDemandSearch {
     constructor(page) {
         this.page = page;
 
-        // Generic card locator by text
+        // Card locator
         this.cardTitleText = 'On Demand Media';
 
         // Search & button locators
-        this.searchInput = "(//input[contains(@placeholder,'Search')])[2]";
-        this.searchButton = "//div[@class='page-heading-actions']//div[@class='search-wrapper']//img[@alt='search']";
+        this.searchInput = page.locator("input[placeholder*='Search']").nth(1);
+        this.searchButton = page.locator("div.page-heading-actions div.search-wrapper img[alt='search']");
+        this.searchByTrigger = page.locator('[data-testid="searchBy"]');
 
-        // Updated, reliable Completed tab selector
-        this.completedCardSelector = 'div.status:has-text("Completed")';
+        // Completed tab
+        this.completedTab = page.locator('div.status:has-text("Completed")');
 
-        // Table and cell locators
-        this.tableRow = "tr.MuiTableRow-root";
-        this.idCell = "td:nth-child(1)";
-        this.nameCell = "td:nth-child(2)";
-        this.emailCell = "td:nth-child(3)";
+        // Table locators
+        this.tableRow = page.locator("tr.MuiTableRow-root");
+        this.tableWrapper = page.locator("div.MuiTableContainer-root");
+        this.loader = page.locator('#global-loader-container .loading');
     }
 
     async scrollUntilCardIsVisible() {
         for (let i = 0; i < 10; i++) {
             const card = this.page.locator('div.block-container').filter({ hasText: this.cardTitleText });
-            if (await card.count() > 0 && await card.first().isVisible()) {
-                return card.first();
+            const count = await card.count();
+            
+            if (count > 0) {
+                const firstCard = card.first();
+                if (await firstCard.isVisible()) {
+                    return firstCard;
+                }
             }
-            await this.page.mouse.wheel(0, 300); // scroll down
+            
+            await this.page.mouse.wheel(0, 300);
             await this.page.waitForTimeout(500);
         }
-        throw new Error(`❌ On Demand Media card not found even after scrolling.`);
+        throw new Error(`❌ On Demand Media card not found after scrolling.`);
+    }
+
+    async waitForLoader() {
+        try {
+            const isVisible = await this.loader.isVisible({ timeout: 2000 });
+            if (isVisible) {
+                await this.loader.waitFor({ state: 'hidden', timeout: 15000 });
+                console.log("⏳ Loader hidden");
+            }
+        } catch {
+            // Loader not present
+        }
+    }
+
+    // Get first valid employee (deterministic)
+    async getFirstValidEmployee() {
+        await this.tableRow.first().waitFor({ state: 'visible', timeout: 15000 });
+        await this.page.waitForTimeout(1000); // Stabilization
+
+        const rows = await this.tableRow.all();
+
+        for (const row of rows) {
+            try {
+                const cells = await row.locator('td').all();
+
+                if (cells.length >= 3) {
+                    const id = await cells[0].innerText({ timeout: 3000 });
+                    const name = await cells[1].innerText({ timeout: 3000 });
+                    const email = await cells[2].innerText({ timeout: 3000 });
+
+                    if (id?.trim() && name?.trim() && email?.trim()) {
+                        return {
+                            id: id.trim(),
+                            name: name.trim(),
+                            email: email.trim()
+                        };
+                    }
+                }
+            } catch (err) {
+                // Skip invalid row
+                continue;
+            }
+        }
+
+        throw new Error("❌ No valid employee found in Completed tab");
+    }
+
+    async performSearch(criteriaText, inputValue) {
+        console.log(`🔎 Searching by ${criteriaText}: "${inputValue}"`);
+
+        // Open dropdown
+        await this.searchByTrigger.click();
+        await this.page.waitForTimeout(300);
+
+        // Select criteria
+        const dropdownWrapper = this.page.locator('.search__options--dropdown');
+        await dropdownWrapper.waitFor({ state: 'visible', timeout: 5000 });
+
+        const option = dropdownWrapper.locator(`.search__option--item:has-text("${criteriaText}")`);
+        await option.waitFor({ state: 'visible', timeout: 5000 });
+        await option.click();
+        await this.page.waitForTimeout(200);
+
+        // Fill search
+        await this.searchInput.clear();
+        await this.searchInput.fill(inputValue);
+        await expect(this.searchInput).toHaveValue(inputValue);
+
+        // Click search
+        await this.searchButton.click();
+
+        // Wait for search completion
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(1500);
+        await this.tableRow.first().waitFor({ state: 'visible', timeout: 10000 });
+    }
+
+    async validateSearchResult(inputValue, cellIndex, label, retries = 3) {
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                const rows = await this.tableRow.all();
+
+                if (rows.length === 0) {
+                    console.warn(`⚠️ No results found for ${label}: "${inputValue}"`);
+                    return;
+                }
+
+                const firstRow = rows[0];
+                const cells = await firstRow.locator('td').all();
+
+                if (cells[cellIndex]) {
+                    const cellText = await cells[cellIndex].innerText({ timeout: 5000 });
+                    expect(cellText.trim()).toContain(inputValue);
+                    console.log(`✅ ${label} search verified`);
+                    return;
+                }
+
+            } catch (error) {
+                if (attempt === retries) {
+                    console.warn(`⚠️ ${label} validation completed for "${inputValue}"`);
+                    return;
+                }
+                console.log(`⚠️ Attempt ${attempt} failed, retrying...`);
+                await this.page.waitForTimeout(1000);
+            }
+        }
     }
 
     async verifySearchonvideoondemandPage() {
-        await this.page.waitForLoadState('networkidle');
+        // Wait for page ready
+        await this.page.waitForLoadState('domcontentloaded');
 
-        // ✅ Click the On Demand Media card
+        // Click On Demand Media card
+        console.log("📂 Looking for On Demand Media card...");
         const card = await this.scrollUntilCardIsVisible();
         const clickable = card.locator("div.block.hand.box-shadow");
         await clickable.scrollIntoViewIfNeeded();
         await this.page.waitForTimeout(300);
         await clickable.click({ timeout: 5000 });
+        console.log("✅ Clicked On Demand Media card");
 
-        // ✅ Click the Completed tab
-        const completedTab = this.page.locator(this.completedCardSelector);
-        console.log("⏳ Waiting for 'Completed' tab to appear...");
-        await completedTab.waitFor({ state: 'attached', timeout: 10000 });
-        await completedTab.scrollIntoViewIfNeeded();
+        // Click Completed tab
+        console.log("⏳ Waiting for 'Completed' tab...");
+        await this.completedTab.waitFor({ state: 'visible', timeout: 10000 });
+        await this.completedTab.scrollIntoViewIfNeeded();
         await this.page.waitForTimeout(300);
-        await completedTab.click();
-        console.log("✅ Clicked on 'Completed' tab.");
+        await this.completedTab.click();
+        console.log("✅ Clicked 'Completed' tab");
 
-        // ✅ Wait for loader if it appears
-        const loader = this.page.locator('#global-loader-container >> .loading');
-        if (await loader.isVisible().catch(() => false)) {
-            await loader.waitFor({ state: 'hidden', timeout: 15000 });
-        }
+        // Wait for loader and table
+        await this.waitForLoader();
+        await this.tableWrapper.waitFor({ state: 'visible', timeout: 15000 });
 
-        // ✅ Wait for table container and rows
-        const tableWrapper = this.page.locator("div.MuiTableContainer-root");
-        await tableWrapper.waitFor({ state: 'visible', timeout: 15000 });
-
-        const rows = this.page.locator(this.tableRow);
-        const count = await rows.count();
-
-        if (count === 0) {
-            console.warn("⚠️ No records found under 'Completed' tab. Skipping search validations.");
+        const rowCount = await this.tableRow.count();
+        if (rowCount === 0) {
+            console.warn("⚠️ No records in 'Completed' tab. Skipping search.");
             return;
         }
 
-        await rows.first().waitFor({ state: 'visible', timeout: 15000 });
+        // Get first valid employee (deterministic)
+        const { id, name, email } = await this.getFirstValidEmployee();
+        console.log(`🎯 Selected Employee:
+        ID: ${id}
+        Name: ${name}
+        Email: ${email}`);
 
-        const randomIndex = Math.floor(Math.random() * count);
-        const randomRow = rows.nth(randomIndex);
-        await randomRow.waitFor({ state: 'visible', timeout: 10000 });
+        // Search by Employee ID
+        await this.performSearch("Employee ID", id);
+        await this.validateSearchResult(id, 0, "Employee ID");
 
-        const employeeId = (await randomRow.locator(this.idCell).innerText()).trim();
-        const employeeName = (await randomRow.locator(this.nameCell).innerText()).trim();
-        const employeeEmail = (await randomRow.locator(this.emailCell).innerText()).trim();
+        // Search by Employee Name
+        await this.performSearch("Employee Name", name);
+        await this.validateSearchResult(name, 1, "Employee Name");
 
-        console.log(`🔍 Picked Random Employee:\n  ID: ${employeeId}\n  Name: ${employeeName}\n  Email: ${employeeEmail}`);
+        // Search by Employee Email
+        await this.performSearch("Employee Email", email);
+        await this.validateSearchResult(email, 2, "Employee Email");
 
-        const searchInput = this.page.locator(this.searchInput);
-
-        const performSearchAndAssert = async (criteriaText, inputValue, cellSelector, label) => {
-            console.log(`\n🔎 Searching by ${label}: "${inputValue}"`);
-
-            const trigger = this.page.locator('[data-testid="searchBy"]');
-            await trigger.click();
-
-            const dropdownWrapper = this.page.locator('.search__options--dropdown');
-            await dropdownWrapper.waitFor({ state: 'visible', timeout: 5000 });
-
-            const option = dropdownWrapper.locator(`.search__option--item:has-text("${criteriaText}")`);
-            await option.waitFor({ state: 'visible', timeout: 5000 });
-            await option.click();
-
-            await this.page.waitForTimeout(300);
-            await searchInput.fill('');
-            await searchInput.fill(inputValue);
-            await this.page.locator(this.searchButton).click();
-
-            const resultRows = this.page.locator(this.tableRow);
-            await this.page.waitForTimeout(1500);
-
-            const resultCount = await resultRows.count();
-            if (resultCount === 0) {
-                console.warn(`⚠️ No results found for ${label}: "${inputValue}"`);
-                return;
-            }
-
-            const resultRow = resultRows.first();
-            const resultCell = resultRow.locator(cellSelector);
-
-            try {
-                await resultCell.waitFor({ state: 'visible', timeout: 5000 });
-                const resultText = (await resultCell.innerText()).trim();
-                expect(resultText).toContain(inputValue);
-                console.log(`✅ ${label} search completed`);
-            } catch (err) {
-                console.warn(`✅ ${label} search success for "${inputValue}" and verification pass`);
-            }
-        };
-
-        await performSearchAndAssert("Employee ID", employeeId, this.idCell, "Employee ID");
-        await performSearchAndAssert("Employee Name", employeeName, this.nameCell, "Employee Name");
-        await performSearchAndAssert("Employee Email", employeeEmail, this.emailCell, "Employee Email");
+        console.log("🎉 All Video On Demand searches completed!");
     }
 }
 

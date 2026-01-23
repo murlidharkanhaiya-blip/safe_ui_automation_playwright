@@ -1,5 +1,5 @@
 module.exports = {
-    username: "rohit.bhadouriya@telusinternational.com",
-    password: "Welcome@123",
-    tenant: "Multitenancy2"
+    username: "admin.ilabs@telusinternational.com",
+    password: "password",
+    tenant: "ilabs"
 };

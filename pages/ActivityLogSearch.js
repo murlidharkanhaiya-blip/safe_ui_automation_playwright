@@ -4,101 +4,175 @@ class ActivityLogSearch {
     constructor(page) {
         this.page = page;
 
-        // Locators
-        this.activitylogNavViewLocator =
-  "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Activity Logs']//a[@data-testid='nav-link']";
-        this.searchInput = "(//input[contains(@placeholder,'Search')])[2]";
-        this.searchButton = "//div[@class='page-heading-actions']//div[@class='search-wrapper']//img[@alt='search']";
+        // Improved Locators
+        this.activitylogNavView = page.locator("div.fixed-left-sidebar li[data-tip='Activity Logs'] a[data-testid='nav-link']");
+        this.searchInput = page.locator("input[placeholder*='Search']").nth(1);
+        this.searchButton = page.locator("div.page-heading-actions div.search-wrapper img[alt='search']");
+        this.searchByTrigger = page.locator('[data-testid="searchBy"]');
+        this.tableRow = page.locator("tr.MuiTableRow-root");
+        this.loader = page.locator('#global-loader-container .loading');
+    }
 
-        this.tableRow = "tr.MuiTableRow-root";
-        this.idCell = "td:nth-child(1)";
-        this.nameCell = "td:nth-child(2)";
-        this.emailCell = "td:nth-child(3)";
+    async waitForLoader() {
+        try {
+            const isVisible = await this.loader.isVisible({ timeout: 2000 });
+            if (isVisible) {
+                await this.loader.waitFor({ state: 'hidden', timeout: 15000 });
+                console.log("⏳ Loader hidden");
+            }
+        } catch {
+            // Loader not present
+        }
+    }
+
+    async getFirstValidEmployee() {
+        await this.tableRow.first().waitFor({ state: 'visible', timeout: 15000 });
+        await this.page.waitForTimeout(1000); // Increased stabilization
+
+        const rows = await this.tableRow.all();
+
+        for (const row of rows) {
+            try {
+                const cells = await row.locator('td').all();
+
+                if (cells.length >= 3) {
+                    const id = await cells[0].innerText({ timeout: 3000 });
+                    const name = await cells[1].innerText({ timeout: 3000 });
+                    const email = await cells[2].innerText({ timeout: 3000 });
+
+                    if (id?.trim() && name?.trim() && email?.trim()) {
+                        return {
+                            id: id.trim(),
+                            name: name.trim(),
+                            email: email.trim()
+                        };
+                    }
+                }
+            } catch (err) {
+                // Skip invalid row
+                continue;
+            }
+        }
+
+        throw new Error("❌ No valid employee found in Activity Logs table");
+    }
+
+    async performSearch(criteriaText, inputValue) {
+        console.log(`🔎 Searching by ${criteriaText}: "${inputValue}"`);
+
+        // Ensure search input is ready
+        await this.searchInput.waitFor({ state: 'visible', timeout: 10000 });
+
+        // Open dropdown
+        await this.searchByTrigger.click();
+        await this.page.waitForTimeout(500); // Increased wait
+
+        // Select criteria
+        const option = this.page.locator(`.search__option--item:has-text("${criteriaText}")`);
+        await option.waitFor({ state: 'visible', timeout: 5000 });
+        await option.click();
+        await this.page.waitForTimeout(300);
+
+        // Clear and fill
+        await this.searchInput.clear();
+        await this.page.waitForTimeout(200); // Wait for clear
+        await this.searchInput.fill(inputValue);
+        await expect(this.searchInput).toHaveValue(inputValue);
+
+        // Click search
+        await this.searchButton.click();
+
+        // Wait for search completion
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(1500); // Increased wait
+        await this.tableRow.first().waitFor({ state: 'visible', timeout: 10000 });
+    }
+
+    async validateSearchResult(inputValue, cellIndex, label, retries = 3) {
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                await this.tableRow.first().waitFor({ state: 'visible', timeout: 10000 });
+
+                const rows = await this.tableRow.all();
+
+                if (rows.length === 0) {
+                    console.warn(`⚠️ No results found for ${label}: "${inputValue}"`);
+                    return;
+                }
+
+                const firstRow = rows[0];
+                const cells = await firstRow.locator('td').all();
+
+                if (cells[cellIndex]) {
+                    const cellText = await cells[cellIndex].innerText({ timeout: 5000 });
+                    expect(cellText.trim()).toContain(inputValue);
+                    console.log(`✅ ${label} search verified`);
+                    return;
+                }
+
+            } catch (error) {
+                if (attempt === retries) {
+                    throw new Error(`❌ ${label} validation failed after ${retries} attempts: ${error.message}`);
+                }
+                console.log(`⚠️ Attempt ${attempt} failed, retrying...`);
+                await this.page.waitForTimeout(1000);
+            }
+        }
     }
 
     async verifySearchOnactivitylogPage() {
-        await this.page.waitForLoadState('networkidle');
+        // ✅ ADDED: Reset state before starting
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.page.waitForTimeout(2000); // Allow previous test cleanup
 
-        // Navigate to activity log  page
-        /* Step 1: Click Activity Logs (sidebar only) */
-   const activityLogsNav = this.page.locator(this.activitylogNavViewLocator);
-  await activityLogsNav.waitFor({ state: 'visible', timeout: 15000 });
-  await activityLogsNav.click();
-        // Wait for loader if visible
-        const loader = this.page.locator('#global-loader-container >> .loading');
-        if (await loader.isVisible().catch(() => false)) {
-            await loader.waitFor({ state: 'hidden', timeout: 10000 });
+        // ✅ ADDED: Check if already on Activity Logs page
+        const currentUrl = this.page.url();
+        console.log(`📍 Current URL: ${currentUrl}`);
+
+        if (!currentUrl.includes('activity-logs')) {
+            console.log("📂 Navigating to Activity Logs...");
+            
+            // Wait for sidebar to be ready
+            const sidebar = this.page.locator('div.fixed-left-sidebar');
+            await sidebar.waitFor({ state: 'visible', timeout: 10000 });
+            
+            await this.activitylogNavView.waitFor({ state: 'visible', timeout: 15000 });
+            await this.activitylogNavView.scrollIntoViewIfNeeded();
+            await this.page.waitForTimeout(500);
+            await this.activitylogNavView.click();
+            console.log("✅ Clicked Activity Logs");
+
+            // Wait for navigation
+            await this.page.waitForURL('**/activity-logs**', { timeout: 10000 });
+            await this.page.waitForLoadState('domcontentloaded');
+        } else {
+            console.log("✅ Already on Activity Logs page");
         }
 
-        // Wait for table to load
-        const rows = this.page.locator(this.tableRow);
-        await rows.first().waitFor({ timeout: 10000 });
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000); // Allow page to stabilize
 
-        const count = await rows.count();
-        if (count === 0) {
-            throw new Error("❌ No employee rows found.");
-        }
+        // Get first valid employee
+        const { id, name, email } = await this.getFirstValidEmployee();
+        console.log(`🎯 Selected Employee:
+        ID: ${id}
+        Name: ${name}
+        Email: ${email}`);
 
-        // Pick a random row
-        const randomIndex = Math.floor(Math.random() * count);
-        const randomRow = rows.nth(randomIndex);
+        // Search by Employee ID
+        await this.performSearch("Employee ID", id);
+        await this.validateSearchResult(id, 0, "Employee ID");
 
-        const employeeId = (await randomRow.locator(this.idCell).innerText()).trim();
-        const employeeName = (await randomRow.locator(this.nameCell).innerText()).trim();
-        const employeeEmail = (await randomRow.locator(this.emailCell).innerText()).trim();
+        // Search by Employee Name
+        await this.performSearch("Employee Name", name);
+        await this.validateSearchResult(name, 1, "Employee Name");
 
-        console.log(`🔍 Picked Random Employee:
-        ID: ${employeeId}
-        Name: ${employeeName}
-        Email: ${employeeEmail}`);
+        // Search by Employee Email
+        await this.performSearch("Employee Email", email);
+        await this.validateSearchResult(email, 2, "Employee Email");
 
-        const searchInput = this.page.locator(this.searchInput);
-
-        // Search and validate
-        const performSearchAndAssert = async (criteriaText, inputValue, cellSelector, label) => {
-            console.log(`\n🔎 Searching by ${label}: "${inputValue}"`);
-
-            const trigger = this.page.locator('[data-testid="searchBy"]');
-            await trigger.click();
-
-            const option = this.page.locator(`.search__option--item:has-text("${criteriaText}")`);
-            await option.waitFor({ state: 'visible', timeout: 3000 });
-            await option.click();
-
-            await this.page.waitForTimeout(300);
-            await searchInput.fill('');
-            await searchInput.fill(inputValue);
-            await this.page.locator(this.searchButton).click();
-
-            const resultRows = this.page.locator(this.tableRow);
-            await this.page.waitForTimeout(1000);
-
-            const resultCount = await resultRows.count();
-            if (resultCount === 0) {
-                console.warn(`⚠️ No results found for ${label}: "${inputValue}"`);
-                return;
-            }
-
-            const resultRow = resultRows.first();
-
-            try {
-                await resultRow.waitFor({ state: 'visible', timeout: 3000 });
-                const resultCell = resultRow.locator(cellSelector);
-                await resultCell.waitFor({ state: 'visible', timeout: 3000 });
-
-                const resultText = (await resultCell.innerText()).trim();
-                expect(resultText).toContain(inputValue);
-
-                console.log(`✅ ${label} search completed`);
-            } catch {
-                console.warn(`✅ ${label} search success: "${inputValue}" visible in results.`);
-            }
-        };
-
-        // Run search validations
-        await performSearchAndAssert("Employee ID", employeeId, this.idCell, "Employee ID");
-        await performSearchAndAssert("Employee Name", employeeName, this.nameCell, "Employee Name");
-        await performSearchAndAssert("Employee Email", employeeEmail, this.emailCell, "Employee Email");
+        console.log("🎉 All Activity Log searches completed successfully!");
     }
 }
 

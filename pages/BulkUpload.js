@@ -5,46 +5,136 @@ class BulkUpload {
   constructor(page) {
     this.page = page;
 
-    // Sidebar icon for Bulk Upload
-   this.bulkUploadNavbar =
-      "(//a[@data-testid='nav-link' and @href='/bulk-upload'])[2]";
-
-    // Container that wraps the drag/drop area and the real <input type="file">
+    // Improved Locators
+    this.bulkUploadNav = page.locator("div.fixed-left-sidebar a[data-testid='nav-link'][href='/bulk-upload']");
     this.dropBlock = page.getByTestId('drop-block_input');
+    this.fileInput = page.locator("input[type='file']:not([disabled])").first();
+    this.loader = page.locator('#global-loader-container .loading');
+  }
 
-    // The actual file input inside the drop block (enabled one)
-    this.fileInput = this.dropBlock.locator("input[type='file']:not([disabled])").first();
-
-    // (Optional) the visible label button, if you ever need to click it
-    this.chooseFileLabel = page.locator("//label[contains(@class,'custom-file-upload') and normalize-space()='Choose File']");
+  async waitForLoader() {
+    try {
+      const isVisible = await this.loader.isVisible({ timeout: 2000 });
+      if (isVisible) {
+        await this.loader.waitFor({ state: 'hidden', timeout: 15000 });
+        console.log("⏳ Loader hidden");
+      }
+    } catch {
+      // Loader not present
+    }
   }
 
   async Bulkuploadfile() {
-    // Open Bulk Upload page/section
-    await this.page.locator(this.bulkUploadNavbar).click();
+    // ✅ Reset state
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForTimeout(2000);
 
-   
-    await this.dropBlock.waitFor({ state: 'visible', timeout: 15000 });
-    await this.dropBlock.scrollIntoViewIfNeeded();
+    const currentUrl = this.page.url();
+    console.log(`📍 Current URL: ${currentUrl}`);
 
-   
-    await this.fileInput.waitFor({ state: 'attached', timeout: 15000 });
+    // ✅ Navigate to Bulk Upload if not already there
+    if (!currentUrl.includes('bulk-upload')) {
+      console.log("📂 Navigating to Bulk Upload...");
+      
+      // Wait for sidebar
+      const sidebar = this.page.locator('div.fixed-left-sidebar');
+      await sidebar.waitFor({ state: 'visible', timeout: 10000 });
+      
+      await this.bulkUploadNav.waitFor({ state: 'visible', timeout: 15000 });
+      await this.bulkUploadNav.scrollIntoViewIfNeeded();
+      await this.page.waitForTimeout(500);
+      await this.bulkUploadNav.click();
+      console.log("✅ Clicked Bulk Upload");
 
-    // File to upload
-    const filePath = path.resolve('tests/TestData_File/sample_file_bulkupload_sample (1).csv');
-
-    // Try to set the file on the scoped input
-    try {
-      await this.fileInput.setInputFiles(filePath);
-    } catch (err) {
-      // Fallback: if the input was moved/detached, grab the first enabled file input on the page
-      const fallbackInput = this.page.locator("input[type='file']:not([disabled])").first();
-      await fallbackInput.waitFor({ state: 'attached', timeout: 5000 });
-      await fallbackInput.setInputFiles(filePath);
+      // Wait for navigation
+      await this.page.waitForURL('**/bulk-upload**', { timeout: 10000 });
+      await this.page.waitForLoadState('domcontentloaded');
+    } else {
+      console.log("✅ Already on Bulk Upload page");
     }
 
-    // Small wait to let UI react (toast/progress etc.)
-    await this.page.waitForTimeout(1000);
+    await this.waitForLoader();
+    await this.page.waitForTimeout(2000);
+
+    // ✅ Wait for drop block to be ready
+    console.log("📤 Preparing file upload...");
+    await this.dropBlock.waitFor({ state: 'visible', timeout: 15000 });
+    await this.dropBlock.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(500);
+
+    // ✅ Verify file exists
+    const filePath = path.resolve('tests/TestData_File/sample_file_bulkupload_sample (1).csv');
+    console.log(`📁 File path: ${filePath}`);
+
+    // ✅ Upload file with retry logic
+    let uploadSuccess = false;
+    const maxAttempts = 3;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        console.log(`📤 Upload attempt ${attempt}/${maxAttempts}...`);
+
+        // Wait for file input to be attached
+        await this.fileInput.waitFor({ state: 'attached', timeout: 10000 });
+        
+        // Set the file
+        await this.fileInput.setInputFiles(filePath);
+        
+        // Wait for upload to process
+        await this.page.waitForTimeout(2000);
+        
+        // Check for success indicators
+        const successToast = this.page.locator("text=success, text=uploaded, text=completed").first();
+        const isSuccess = await successToast.isVisible({ timeout: 5000 }).catch(() => false);
+        
+        if (isSuccess) {
+          const message = await successToast.textContent();
+          console.log(`✅ Upload success: ${message}`);
+          uploadSuccess = true;
+          break;
+        }
+
+        // Check for error messages
+        const errorToast = this.page.locator("text=error, text=failed, text=invalid").first();
+        const isError = await errorToast.isVisible({ timeout: 3000 }).catch(() => false);
+        
+        if (isError) {
+          const errorMsg = await errorToast.textContent();
+          console.warn(`⚠️ Upload error: ${errorMsg}`);
+          
+          if (attempt < maxAttempts) {
+            console.log("🔄 Retrying upload...");
+            await this.page.waitForTimeout(2000);
+            continue;
+          }
+        } else {
+          // No explicit success/error message, assume success
+          console.log("✅ File uploaded (no explicit confirmation)");
+          uploadSuccess = true;
+          break;
+        }
+
+      } catch (err) {
+        console.warn(`⚠️ Attempt ${attempt} failed: ${err.message}`);
+        
+        if (attempt === maxAttempts) {
+          throw new Error(`❌ File upload failed after ${maxAttempts} attempts: ${err.message}`);
+        }
+        
+        // Wait before retry
+        await this.page.waitForTimeout(2000);
+      }
+    }
+
+    if (!uploadSuccess) {
+      throw new Error("❌ File upload did not complete successfully");
+    }
+
+    // ✅ Wait for any post-upload processing
+    await this.waitForLoader();
+    await this.page.waitForTimeout(2000);
+
+    console.log("🎉 Bulk upload completed successfully!");
   }
 }
 

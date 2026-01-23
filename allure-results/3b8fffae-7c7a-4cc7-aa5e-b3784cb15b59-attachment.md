@@ -1,0 +1,252 @@
+# Page snapshot
+
+```yaml
+- img "logo"
+- text: SAFE iLabs
+- searchbox "Search by Emp. Name/ID"
+- img "search"
+- img "logo"
+- text: "3 AI admin.ilabs Last Login: 22-Jan-2026, 10:42 PM"
+- list:
+  - listitem:
+    - link:
+      - /url: /dashboard
+      - img
+  - listitem:
+    - link:
+      - /url: /employees
+      - img
+  - listitem:
+    - link:
+      - /url: /bulk-upload
+      - img
+  - listitem:
+    - link:
+      - /url: /users
+      - img
+  - listitem:
+    - link:
+      - /url: /live-streaming
+      - img
+  - listitem:
+    - link:
+      - /url: /screenlock/pending
+      - img
+  - listitem:
+    - link:
+      - /url: /batch-scheduling
+      - img
+  - listitem:
+    - link:
+      - /url: /utility-updates/windows
+      - img
+  - listitem:
+    - link:
+      - /url: /activity-logs
+      - img
+- list:
+  - listitem:
+    - link:
+      - /url: /settings/image_general_setting
+      - img
+- main:
+  - text: Filter Select Range
+  - textbox "Select Range": 03-Jan-2026 - 22-Jan-2026
+  - img
+  - text: Deleted By Select...
+  - textbox
+  - button "APPLY" [disabled]
+  - button "RESET" [disabled]
+  - button "CANCEL"
+  - list:
+    - listitem:
+      - img "root-icon"
+      - text: Dashboard
+    - listitem:
+      - img "next-icon"
+      - text: Deleted Images
+  - img
+  - heading "Deleted Images (1)" [level=4]
+  - heading [level=6]
+  - button:
+    - img
+  - img "Filter"
+  - text: Search by
+  - img "dropdown"
+  - searchbox "Search"
+  - img "search"
+  - text: Images Videos 03/01/2026 - 22/01/2026
+  - table "sticky table":
+    - rowgroup:
+      - row "Emp ID Emp Name Email ID No. of Deleted Images Deleted by View":
+        - columnheader "Emp ID"
+        - columnheader "Emp Name"
+        - columnheader "Email ID"
+        - columnheader "No. of Deleted Images"
+        - columnheader "Deleted by"
+        - columnheader "View"
+    - rowgroup:
+      - checkbox "145672 Murli Kumar murlidhar.kanhaiya@telusinternational.com 9 admin.ilabs +1 more View":
+        - cell "145672"
+        - cell "Murli Kumar"
+        - cell "murlidhar.kanhaiya@telusinternational.com"
+        - cell "9"
+        - cell "admin.ilabs +1 more"
+        - cell "View":
+          - img "View"
+  - list:
+    - listitem:
+      - link "Go to first page":
+        - /url: "#"
+        - text: First
+    - listitem:
+      - link "Go to previous page":
+        - /url: "#"
+    - listitem:
+      - link "Go to page number 1":
+        - /url: "#"
+        - text: "1"
+    - listitem:
+      - link "Go to next page":
+        - /url: "#"
+    - listitem:
+      - link "Go to last page":
+        - /url: "#"
+        - text: Last
+  - text: Showing 1 to 1 of 1 Records | Rows Per Page
+  - textbox "Select": "10"
+- text: "8"
+- list:
+  - listitem: Today
+  - listitem: Yesterday
+  - listitem: Last 20 Days
+  - listitem: Custom Range
+- table:
+  - rowgroup:
+    - row "Dec 2025":
+      - cell
+      - cell "Dec 2025"
+      - cell
+    - row "S M T W T F S":
+      - cell "S"
+      - cell "M"
+      - cell "T"
+      - cell "W"
+      - cell "T"
+      - cell "F"
+      - cell "S"
+  - rowgroup:
+    - row "30 1 2 3 4 5 6":
+      - cell "30"
+      - cell "1"
+      - cell "2"
+      - cell "3"
+      - cell "4"
+      - cell "5"
+      - cell "6"
+    - row "7 8 9 10 11 12 13":
+      - cell "7"
+      - cell "8"
+      - cell "9"
+      - cell "10"
+      - cell "11"
+      - cell "12"
+      - cell "13"
+    - row "14 15 16 17 18 19 20":
+      - cell "14"
+      - cell "15"
+      - cell "16"
+      - cell "17"
+      - cell "18"
+      - cell "19"
+      - cell "20"
+    - row "21 22 23 24 25 26 27":
+      - cell "21"
+      - cell "22"
+      - cell "23"
+      - cell "24"
+      - cell "25"
+      - cell "26"
+      - cell "27"
+    - row "28 29 30 31 1 2 3":
+      - cell "28"
+      - cell "29"
+      - cell "30"
+      - cell "31"
+      - cell "1"
+      - cell "2"
+      - cell "3"
+    - row "4 5 6 7 8 9 10":
+      - cell "4"
+      - cell "5"
+      - cell "6"
+      - cell "7"
+      - cell "8"
+      - cell "9"
+      - cell "10"
+- table:
+  - rowgroup:
+    - row "Jan 2026":
+      - cell
+      - cell "Jan 2026"
+      - cell
+    - row "S M T W T F S":
+      - cell "S"
+      - cell "M"
+      - cell "T"
+      - cell "W"
+      - cell "T"
+      - cell "F"
+      - cell "S"
+  - rowgroup:
+    - row "28 29 30 31 1 2 3":
+      - cell "28"
+      - cell "29"
+      - cell "30"
+      - cell "31"
+      - cell "1"
+      - cell "2"
+      - cell "3"
+    - row "4 5 6 7 8 9 10":
+      - cell "4"
+      - cell "5"
+      - cell "6"
+      - cell "7"
+      - cell "8"
+      - cell "9"
+      - cell "10"
+    - row "11 12 13 14 15 16 17":
+      - cell "11"
+      - cell "12"
+      - cell "13"
+      - cell "14"
+      - cell "15"
+      - cell "16"
+      - cell "17"
+    - row "18 19 20 21 22 23 24":
+      - cell "18"
+      - cell "19"
+      - cell "20"
+      - cell "21"
+      - cell "22"
+      - cell "23"
+      - cell "24"
+    - row "25 26 27 28 29 30 31":
+      - cell "25"
+      - cell "26"
+      - cell "27"
+      - cell "28"
+      - cell "29"
+      - cell "30"
+      - cell "31"
+    - row "1 2 3 4 5 6 7":
+      - cell "1"
+      - cell "2"
+      - cell "3"
+      - cell "4"
+      - cell "5"
+      - cell "6"
+      - cell "7"
+- text: 03-Jan-2026 - 22-Jan-2026
+- button "Apply"
+```

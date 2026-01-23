@@ -1,0 +1,3 @@
+✅ Employee ID search success for "XIND17934" and verification pass
+✅ Employee Name search success for "Rohit Bhadouriya" and verification pass
+✅ Employee Email search success for "rohit.bhadouriya@telusinternational.com" and verification pass

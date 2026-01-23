@@ -4,114 +4,178 @@ class BatchSchedulingBucketCleaner {
     constructor(page) {
         this.page = page;
 
-        this.batchschedulingnavbar = "//div[contains(@class,'fixed-left-sidebar')]//li[@data-tip='Batch Scheduling']//a[@data-testid='nav-link']";
-      //  this.dailymailButton = this.page.locator("(//div[contains(text(),'Daily Mail')])[1]");
-        this.createnewscheduler = this.page.locator("(//button[normalize-space()='Create New scheduler'])[1]");
-        this.SchedulerNameInput = page.locator("(//input[@id='scheduler_name'])[1]");
-        this.selectrange = this.page.locator("//input[@placeholder='Select Range']");
-        this.tomorrowdate = this.page.locator("//li[@data-range-key='Tomorrow']");
+        // Locators
+        this.batchSchedulingNav = page.locator("div.fixed-left-sidebar li[data-tip='Batch Scheduling'] a[data-testid='nav-link']");
+        this.createNewScheduler = page.locator("button:has-text('Create New scheduler')").first();
+        this.schedulerNameInput = page.locator("input#scheduler_name").first();
+        this.selectRange = page.locator("input[placeholder='Select Range']");
+        this.tomorrowDate = page.locator("li[data-range-key='Tomorrow']");
+        this.duration = page.locator("div.inputBoxDiv.ellipsis").first();
+        this.occurrences = page.locator("div.inputBoxDiv.ellipsis").nth(1);
+        this.saveButton = page.locator("button:has-text('Save')").first();
+        this.loader = page.locator('#global-loader-container .loading');
+    }
 
-        // Dropdowns
-        this.duration = this.page.locator("(//div[@class='inputBoxDiv ellipsis '])[1]");
-        this.occurrences = this.page.locator("(//div[@class='inputBoxDiv ellipsis '])[2]");
-        
-        // ✅ Timezone dropdown container (not input)
-        this.timezoneDropdown = this.page.locator("//div[contains(@class,'inputBoxDiv') and contains(., 'Select the time zone')]");
-
-        this.timezoneOptions = this.page.locator("a[data-testid='dropdown-item']");
-
-        this.savebutton = this.page.locator("(//button[normalize-space()='Save'])[1]");
+    async waitForLoader() {
+        try {
+            const isVisible = await this.loader.isVisible({ timeout: 2000 });
+            if (isVisible) {
+                await this.loader.waitFor({ state: 'hidden', timeout: 15000 });
+                console.log("⏳ Loader hidden");
+            }
+        } catch {
+            // Loader not present
+        }
     }
 
     async Batchschedulingjobbucketcleaner() {
-        // batch scheduling nav view click
-         /* Step 1: Click batch scheduling (sidebar only) */
-   const batchschedulingnav = this.page.locator(this.batchschedulingnavbar);
-  await batchschedulingnav.waitFor({ state: 'visible', timeout: 15000 });
-  await batchschedulingnav.click();
+        // ✅ Reset state
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.page.waitForTimeout(2000);
 
-        //await this.dailymailButton.click();
-        //await this.page.waitForTimeout(2000);
+        const currentUrl = this.page.url();
+        console.log(`📍 Current URL: ${currentUrl}`);
 
-        await this.createnewscheduler.click();
-        await this.page.waitForTimeout(1000);
+        // ✅ Navigate to Batch Scheduling if not already there
+        if (!currentUrl.includes('batch-scheduling')) {
+            console.log("📂 Navigating to Batch Scheduling...");
+            
+            // Wait for sidebar
+            const sidebar = this.page.locator('div.fixed-left-sidebar');
+            await sidebar.waitFor({ state: 'visible', timeout: 10000 });
+            
+            await this.batchSchedulingNav.waitFor({ state: 'visible', timeout: 15000 });
+            await this.batchSchedulingNav.scrollIntoViewIfNeeded();
+            await this.page.waitForTimeout(500);
+            await this.batchSchedulingNav.click();
+            console.log("✅ Clicked Batch Scheduling");
 
+            // Wait for navigation
+            await this.page.waitForLoadState('domcontentloaded');
+            await this.waitForLoader();
+            await this.page.waitForTimeout(2000);
+        } else {
+            console.log("✅ Already on Batch Scheduling page");
+        }
+
+        // ✅ Click Create New Scheduler
+        console.log("🆕 Creating new scheduler...");
+        await this.createNewScheduler.waitFor({ state: 'visible', timeout: 10000 });
+        await this.createNewScheduler.click();
+        await this.page.waitForTimeout(1500);
+
+        // ✅ Fill Scheduler Name
         const schedulerName = `bucketcleaner_${Date.now()}`;
-        await this.SchedulerNameInput.fill(schedulerName);
-        console.log("✅ Scheduler Name filled");
+        await this.schedulerNameInput.waitFor({ state: 'visible', timeout: 10000 });
+        await this.schedulerNameInput.clear();
+        await this.schedulerNameInput.fill(schedulerName);
+        console.log(`✅ Scheduler Name: ${schedulerName}`);
 
-        // Select range → Tomorrow
-        await this.selectrange.click();
+        // ✅ Select Date Range - Tomorrow
+        console.log("📅 Selecting date range...");
+        await this.selectRange.waitFor({ state: 'visible', timeout: 10000 });
+        await this.selectRange.click();
         await this.page.waitForTimeout(1000);
+        
+        // Scroll within date picker if needed
         await this.page.mouse.wheel(0, 400);
-        await this.page.waitForTimeout(1000);
-        await this.tomorrowdate.waitFor({ state: 'visible', timeout: 5000 });
-        await this.tomorrowdate.click();
+        await this.page.waitForTimeout(500);
+        
+        await this.tomorrowDate.waitFor({ state: 'visible', timeout: 10000 });
+        await this.tomorrowDate.click();
         console.log("✅ Date range 'Tomorrow' selected");
-        // Duration → First option = Daily
+        await this.page.waitForTimeout(500);
+
+        // ✅ Select Duration (Daily)
+        console.log("⏱️ Selecting duration...");
+        await this.duration.waitFor({ state: 'visible', timeout: 10000 });
         await this.duration.click();
+        await this.page.waitForTimeout(500);
+        
         const durationOptions = this.page.locator("a[data-testid='dropdown-item']");
         await durationOptions.first().waitFor({ state: 'visible', timeout: 5000 });
         const firstDuration = durationOptions.first();
-        console.log("Selecting Duration:", await firstDuration.textContent());
+        const durationText = await firstDuration.textContent();
+        console.log(`  Selecting Duration: ${durationText}`);
         await firstDuration.click();
-        console.log("✅ Duration selected: Daily");
+        console.log("✅ Duration selected");
+        await this.page.waitForTimeout(500);
 
-        // Occurrences → Second option = Twice
+        // ✅ Select Occurrences (Twice)
+        console.log("🔢 Selecting occurrences...");
+        await this.occurrences.waitFor({ state: 'visible', timeout: 10000 });
         await this.occurrences.click();
+        await this.page.waitForTimeout(500);
+        
         const occurrenceOptions = this.page.locator("a[data-testid='dropdown-item']");
         await occurrenceOptions.nth(1).waitFor({ state: 'visible', timeout: 5000 });
         const secondOccurrence = occurrenceOptions.nth(1);
-        console.log("Selecting Occurrence:", await secondOccurrence.textContent());
+        const occurrenceText = await secondOccurrence.textContent();
+        console.log(`  Selecting Occurrence: ${occurrenceText}`);
         await secondOccurrence.click();
-        console.log("✅ Occurrences selected: Twice");
+        console.log("✅ Occurrences selected");
+        await this.page.waitForTimeout(500);
 
-        // Scroll page to bottom first
-await this.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-await this.page.waitForTimeout(1000);
+        // ✅ Select Timezone
+        console.log("🌍 Selecting timezone...");
+        
+        // Scroll to timezone section
+        await this.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await this.page.waitForTimeout(1000);
 
-// Wait for the Timezone label to be visible
+        const timezoneLabel = this.page.locator("text=Timezone").first();
+        await timezoneLabel.waitFor({ state: 'visible', timeout: 10000 });
+        await timezoneLabel.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(500);
 
-// Find the timezone input field
-const timezoneLabel = this.page.locator("//div[contains(text(), 'Timezone')]");
-await timezoneLabel.waitFor({ state: 'visible', timeout: 5000 });
-await timezoneLabel.scrollIntoViewIfNeeded();
+        const timezoneInput = this.page.locator("input[data-testid='inputControl-pointer']").last();
+        await timezoneInput.waitFor({ state: 'visible', timeout: 10000 });
+        await timezoneInput.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
+        await timezoneInput.click();
+        await this.page.waitForTimeout(1000);
 
-const timezoneInput = timezoneLabel.locator("..").locator("input[data-testid='inputControl-pointer']");
-await timezoneInput.waitFor({ state: 'visible', timeout: 5000 });
+        // Select timezone option
+        const timezoneOption = this.page.locator("text=India Standard Time").first();
+        await timezoneOption.waitFor({ state: 'visible', timeout: 10000 });
+        await timezoneOption.click();
+        await this.page.waitForTimeout(500);
 
-// Click to open the timezone dropdown
-await timezoneInput.click();
-await this.page.waitForTimeout(1000);
+        const selectedTimezone = await timezoneInput.inputValue();
+        console.log(`✅ Timezone selected: ${selectedTimezone}`);
 
-// Try locating by any element containing the text
-const option = this.page.locator("text=India Standard Time").first();
-await option.waitFor({ state: 'visible', timeout: 5000 });
-await option.click();
-await this.page.waitForTimeout(1000);
+        // ✅ Check for form errors
+        const errorMessages = await this.page.locator(".error-message").allTextContents();
+        if (errorMessages.length > 0) {
+            console.warn("⚠️ Form errors:", errorMessages);
+        }
 
-const selectedValue = await timezoneInput.inputValue();
-console.log("✅ Timezone selected:", selectedValue);
+        // ✅ Click Save
+        console.log("💾 Saving scheduler...");
+        await this.saveButton.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(500);
+        
+        await this.saveButton.waitFor({ state: 'visible', timeout: 10000 });
+        await expect(this.saveButton).toBeEnabled({ timeout: 10000 });
+        await this.saveButton.click();
+        console.log("✅ Save button clicked");
 
-const errorMessages = await this.page.locator(".error-message").allTextContents();
-console.log("Form errors:", errorMessages);
+        // ✅ Wait for save completion
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000);
 
-// Scroll to Save button
-const saveButton = this.page.locator("(//button[normalize-space()='Save'])[1]");
-await saveButton.scrollIntoViewIfNeeded();
-await this.page.waitForTimeout(500);
+        // ✅ Verify success (optional)
+        const successMessage = this.page.locator("text=successfully, text=created, text=saved").first();
+        const isSuccess = await successMessage.isVisible({ timeout: 5000 }).catch(() => false);
+        
+        if (isSuccess) {
+            const message = await successMessage.textContent();
+            console.log(`🎉 Success: ${message}`);
+        } else {
+            console.log("✅ Scheduler saved (no explicit success message)");
+        }
 
-// Wait until Save is enabled
-await expect(saveButton).toBeVisible({ timeout: 10000 });
-await expect(saveButton).toBeEnabled({ timeout: 10000 });
-
-// Click Save
-await saveButton.click();
-console.log("✅ Save button clicked");
-
-
-// Optionally, wait for navigation or success message
-await this.page.waitForTimeout(2000);
+        console.log("🎉 Batch Scheduling job created successfully!");
     }
 }
 

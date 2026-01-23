@@ -1,0 +1,28 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+📍 Current URL: https://fd-mprod.tisa.ai/dashboard
+📂 Navigating to Manage Users...
+✅ Clicked Manage Users
+⏳ Loader hidden
+🎯 Selected User:
+        Employee ID: 10092134
+        Username: Shivani
+        Email ID: shivani.slathia@telusinternational.com
+🔎 Searching by Employee ID: "10092134"
+⏳ Loader hidden
+🔎 Searching by Username: "Shivani"
+⏳ Loader hidden
+🔎 Searching by Email ID: "shivani.slathia@telusinternational.com"
+⏳ Loader hidden
+🎉 All Manage Users searches completed successfully!
+✅ Test completed and browser closed after search.

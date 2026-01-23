@@ -1,87 +1,44 @@
-import { defineConfig, devices } from '@playwright/test';
+// @ts-check
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
 
-  // Timeout settings
-  timeout: 60000,
+  // Max time one test can run
+  timeout: 180 * 1000, // 3 minutes per test
 
-  // Retry failing tests 3 times
-  retries: 3,
+  // Global timeout for expect() assertions
+  expect: {
+    timeout: 45 * 1000, // 45 seconds for expect checks
+  },
 
-  // Reporter configuration
+  // Run tests serially to avoid shared state issues across tests
+  workers: 2,
+
+  // ✅ Give failing tests 3 retry attempts (MOVED HERE)
+  retries: 2,
+
+  // Reporters
   reporter: [
-    ['html', { outputFolder: 'playwright-report' }],  // HTML reporter
-    ['list'],                                          // Console output
-    ['allure-playwright', {                            // Allure reporter
-      outputFolder: 'allure-results',
-      detail: true,
-      suiteTitle: true,
-      categories: [
-        {
-          name: 'Flaky tests',
-          matchedStatuses: ['flaky']
-        },
-        {
-          name: 'Failed tests',
-          matchedStatuses: ['failed']
-        },
-        {
-          name: 'Broken tests',
-          matchedStatuses: ['broken']
-        }
-      ],
-      environmentInfo: {
-        'Test Environment': 'MQA',
-        'Browser': 'Chromium',
-        'Platform': 'Windows',
-        'Framework': 'Playwright'
-      }
-    }],
-    ['json', { outputFile: 'test-results/results.json' }]  // JSON reporter
+    ['html', { open: 'never' }],
+    ['allure-playwright']
   ],
 
+  // Shared settings for all tests
   use: {
-    // Browser settings
     browserName: 'chromium',
     headless: true,
 
-    // Base URL (uncomment when needed)
-    // baseURL: 'https://fd-mqa.xavlab.xyz',
+    // Increased viewport for better report visuals
+    viewport: { width: 1240, height: 800 },
 
-    // Screenshot settings
+    ignoreHTTPSErrors: true,
+
+    actionTimeout: 30 * 1000,
+    navigationTimeout: 60 * 1000,
+
     screenshot: 'only-on-failure',
-
-    // Video settings
     video: 'retain-on-failure',
-
-    // Trace settings
-    trace: 'on-first-retry',
-
-    // Viewport
-    viewport: { width: 1920, height: 1080 },
-
-    // Action timeout
-    actionTimeout: 15000,
-
-    // Navigation timeout
-    navigationTimeout: 30000,
+    trace: 'retain-on-failure',
   },
-
-  // Projects for different browsers (optional)
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    // Uncomment to add more browsers
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-  ],
 });

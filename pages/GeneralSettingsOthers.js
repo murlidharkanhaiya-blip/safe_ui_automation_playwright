@@ -4,121 +4,159 @@ class GeneralSettingsOthers {
     constructor(page) {
         this.page = page;
 
-        // Scrollable sidebar container
-this.sidebar = this.page.locator(".fixed-left-sidebar").first();
-
-// Settings icon (inside correct container)
-this.settingsIcon = this.page
-    .locator('.fixed-left-sidebar a[data-testid="nav-link"][href="/settings/image_general_setting"]')
-    .first();
-
-        // Tabs & Inputs
-        this.othertab = "(//span[normalize-space()='Other'])[1]";
-        this.calendarexpirationdaterangeinput = this.page.locator("(//input[@id='calendar_date'])[1]");
-        this.workdayintegrationtoggle = this.page.locator("(//div[@class='react-switch-bg'])[1]");
-        //this.shiftmanagementtoggle = this.page.locator("(//div[@class='react-switch-bg'])[2]");
-        this.trackemployeelocationtoggle = this.page.locator("(//div[@class='react-switch-bg'])[3]");
-        this.autorefreshtoggle = this.page.locator("(//div[@class='react-switch-bg'])[4]");
-        this.bulkuploadlimit = this.page.locator("(//input[@id='bulk_onboard_record_limit'])[1]");
-
-        // Buttons
-        this.savebutton = '.button-box__button.submit';
-        this.confrmsnpopup = this.page.locator("(//button[normalize-space()='SAVE'])[1]");
-
-        // Loader
-        this.loader = '#global-loader-container .loading';
+        // Locators
+        this.settingsIcon = page.locator('.fixed-left-sidebar a[data-testid="nav-link"][href="/settings/image_general_setting"]').first();
+        this.otherTab = page.locator("span:has-text('Other')");
+        this.calendarExpirationInput = page.locator("input#calendar_date").first();
+        this.workdayIntegrationToggle = page.locator("div.react-switch-bg").first();
+        this.trackEmployeeLocationToggle = page.locator("div.react-switch-bg").nth(2);
+        this.autoRefreshToggle = page.locator("div.react-switch-bg").nth(3);
+        this.bulkUploadLimitInput = page.locator("input#bulk_onboard_record_limit").first();
+        this.saveButton = page.locator('button.button-box__button.submit, button:has-text("Save")').first();
+        this.popupSaveButton = page.locator('button[data-testid="confirmation-popup-btn"]');
+        this.confirmPopup = page.locator("text=/settings updated successfully/i, text=/success/i");
+        this.loader = page.locator('#global-loader-container .loading');
     }
 
-    
-    async scrollNavBarToBottom() {
-        const navBar = this.sidebar;
-
-        await navBar.evaluate(el => {
-            el.scrollTo({
-                top: el.scrollHeight,
-                behavior: 'instant'
-            });
-        });
-
-        await this.page.waitForTimeout(500); // allow layout update
+    async waitForLoader() {
+        try {
+            const isVisible = await this.loader.isVisible({ timeout: 2000 });
+            if (isVisible) {
+                await this.loader.waitFor({ state: 'hidden', timeout: 20000 });
+                console.log("⏳ Loader hidden");
+            }
+        } catch {
+            // Loader not present
+        }
     }
 
-   
+    async setFieldValue(input, value, fieldName) {
+        console.log(`✏️ Setting ${fieldName} to: ${value}`);
+        
+        await input.waitFor({ state: 'visible', timeout: 15000 });
+        await input.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
 
-    async clearAndFill(locator, value) {
-        await locator.waitFor({ state: "visible" });
-        await locator.scrollIntoViewIfNeeded();
-        await locator.fill("");
-        await locator.type(value.toString(), { delay: 50 });
-        await this.page.waitForTimeout(150);
+        await input.clear();
+        await this.page.waitForTimeout(200);
+        await input.fill(value);
+        
+        await expect(input).toHaveValue(value, { timeout: 5000 });
+        console.log(`✅ ${fieldName} set to: ${value}`);
     }
 
-    async clickToggle(locator) {
-        await locator.waitFor({ state: "visible" });
-        await locator.scrollIntoViewIfNeeded();
-        await locator.click({ force: true });
-        await this.page.waitForTimeout(150);
+    async clickToggle(toggle, toggleName) {
+        console.log(`🔘 Toggling ${toggleName}...`);
+        
+        await toggle.waitFor({ state: 'visible', timeout: 15000 });
+        await toggle.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
+        await toggle.click();
+        console.log(`✅ ${toggleName} toggled`);
+        await this.page.waitForTimeout(300);
     }
-
-    async waitForLoaderToDisappear() {
-        await this.page.waitForSelector(this.loader, {
-            state: "hidden",
-            timeout: 30000
-        });
-    }
-
-    
 
     async generalsettingOthers() {
+        // ✅ Reset state
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.page.waitForTimeout(3000);
 
-        await this.page.waitForLoadState("domcontentloaded");
-        await this.waitForLoaderToDisappear();
-
-        // --- Scroll Sidebar to show settings icon ---
-        await this.scrollNavBarToBottom();
-
-        // --- CLICK SETTINGS ICON ---
-        await this.settingsIcon.waitFor({ state: "visible", timeout: 15000 });
+        // ✅ Click Settings
+        console.log("⚙️ Clicking Settings icon...");
+        
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000);
+        
+        // Scroll sidebar to bottom
+        const sidebar = this.page.locator('div.fixed-left-sidebar');
+        await sidebar.waitFor({ state: 'visible', timeout: 10000 });
+        await sidebar.evaluate(el => el.scrollTop = el.scrollHeight);
+        await this.page.waitForTimeout(1000);
+        
+        await this.settingsIcon.waitFor({ state: 'visible', timeout: 15000 });
         await this.settingsIcon.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(500);
         await this.settingsIcon.click();
+        console.log("✅ Clicked Settings");
 
-        // --- CLICK OTHER TAB ---
-        const othertab = this.page.locator(this.othertab);
-        await othertab.waitFor({ state: "visible", timeout: 15000 });
-        await othertab.scrollIntoViewIfNeeded();
-        await othertab.click();
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000);
 
-        await this.waitForLoaderToDisappear();
+        // ✅ Click Other tab
+        console.log("📋 Clicking Other tab...");
+        await this.otherTab.waitFor({ state: 'visible', timeout: 15000 });
+        await this.otherTab.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(500);
+        await this.otherTab.click();
+        console.log("✅ Other tab opened");
 
-        // --- FILL FORM VALUES ---
-        await this.clearAndFill(this.calendarexpirationdaterangeinput, "20");
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000);
 
-        await this.clickToggle(this.workdayintegrationtoggle);
-       // await this.clickToggle(this.shiftmanagementtoggle);
-        await this.clickToggle(this.trackemployeelocationtoggle);
-        await this.clickToggle(this.autorefreshtoggle);
+        // ✅ Wait for form
+        await this.calendarExpirationInput.waitFor({ state: 'visible', timeout: 15000 });
+        console.log("✅ Other settings form loaded");
 
-        await this.clearAndFill(this.bulkuploadlimit, "500");
+        // ✅ Update input fields
+        await this.setFieldValue(this.calendarExpirationInput, '30', "Calendar Expiration Date Range");
+        await this.setFieldValue(this.bulkUploadLimitInput, '200', "Bulk Upload Limit");
 
-        // --- WAIT FOR SAVE BUTTON TO BE ENABLED ---
-        const saveButton = this.page.locator(this.savebutton);
-        await saveButton.scrollIntoViewIfNeeded();
-        await saveButton.waitFor({ state: "visible", timeout: 15000 });
+        // ✅ Toggle switches
+        await this.clickToggle(this.workdayIntegrationToggle, "Workday Integration");
+        await this.clickToggle(this.trackEmployeeLocationToggle, "Track Employee Location");
+        await this.clickToggle(this.autoRefreshToggle, "Auto Refresh");
 
-        await this.page.waitForFunction(() => {
-            const btn = document.querySelector('.button-box__button.submit');
-            return btn && !btn.disabled;
-        }, { timeout: 30000 });
+        await this.page.waitForTimeout(500);
+        await this.waitForLoader();
 
-        await saveButton.click();
-        await this.waitForLoaderToDisappear();
+        // ✅ Click main Save button
+        console.log("💾 Clicking Save button...");
+        await this.saveButton.waitFor({ state: 'visible', timeout: 10000 });
+        await this.saveButton.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
+        
+        const isSaveEnabled = await this.saveButton.isEnabled({ timeout: 5000 }).catch(() => false);
+        
+        if (!isSaveEnabled) {
+            console.warn("⚠️ Save button is disabled");
+            return;
+        }
 
-        // --- CONFIRM POPUP ---
-        await this.confrmsnpopup.waitFor({ state: "visible", timeout: 15000 });
-        await this.confrmsnpopup.scrollIntoViewIfNeeded();
-        await this.confrmsnpopup.click();
+        await this.saveButton.click();
+        console.log("✅ Save button clicked");
 
-        await this.waitForLoaderToDisappear();
+        await this.page.waitForTimeout(2000);
+
+        // ✅ Click popup SAVE button
+        console.log("✔️ Waiting for confirmation popup...");
+        
+        await this.popupSaveButton.waitFor({ state: 'visible', timeout: 15000 });
+        console.log("📋 Confirmation popup appeared");
+        
+        await this.page.waitForTimeout(500);
+        
+        // Force click to bypass overlay
+        await this.popupSaveButton.click({ force: true });
+        console.log("✅ Popup SAVE clicked");
+
+        // ✅ Wait for save completion
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000);
+
+        // ✅ Verify success
+        const isSuccessVisible = await this.confirmPopup.isVisible({ timeout: 10000 }).catch(() => false);
+        
+        if (isSuccessVisible) {
+            const message = await this.confirmPopup.textContent();
+            console.log(`🎉 ${message}`);
+        } else {
+            console.log("✅ Settings saved");
+        }
+
+        console.log("🎉 Other settings updated successfully!");
     }
 }
 

@@ -1,0 +1,19 @@
+🌐 Navigating to login page...
+✅ Login page loaded
+🏢 Entering tenant: ilabs
+✅ Tenant entered: ilabs
+✅ Clicked Sign In (tenant step)
+⏳ Loader hidden
+👤 Logging in as: admin.ilabs@telusinternational.com
+✅ Username entered
+✅ Password entered
+✅ Clicked Sign In
+✅ Redirected to dashboard
+🎉 Login successful!
+🎯 Applying filter: Uninstalled
+✅ Filter "Uninstalled" applied successfully.
+🎯 Applying filter: Stopped
+✅ Filter "Stopped" applied successfully.
+🎯 Applying filter: All
+✅ Filter "All" applied successfully.
+✅ Test completed and browser closed after verification.

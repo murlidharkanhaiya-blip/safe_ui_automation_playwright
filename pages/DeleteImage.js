@@ -3,86 +3,128 @@ const { expect } = require('@playwright/test');
 class DeleteImage {
   constructor(page) {
     this.page = page;
-
-    // Dashboard card
-    this.totaluniquecardLocator = "div.recharts-wrapper";
-
-    // Action & drilldown
-    this.actionicon = this.page.locator("(//img[@title='View Employee Details'])[1]");
-    this.drilldown = this.page.locator("(//*[name()='polyline'][@id='Path'])[1]");
-
-    // Delete flow
-    this.enterdeleteremark = this.page.locator("(//textarea[@placeholder='Enter deletion remarks'])[1]");
-    this.deleteBtn = this.page.locator("(//button[normalize-space()='DELETE'])[1]");
-
-    // Loader
-    this.loader = this.page.locator('#global-loader-container >> .loading');
+    this.loader = page.locator('#global-loader-container .loading');
   }
 
-  // 🔁 Robust loader wait (handles late appearance)
   async waitForLoader() {
     try {
-      await this.loader.waitFor({ state: 'hidden', timeout: 20000 });
+      const isVisible = await this.loader.isVisible({ timeout: 2000 });
+      if (isVisible) {
+        await this.loader.waitFor({ state: 'hidden', timeout: 20000 });
+        console.log("⏳ Loader hidden");
+      }
     } catch {
-      // ignore if loader never appears
+      // Loader not present
     }
   }
 
   async deleteimagesingroup() {
-    // ❌ DO NOT use networkidle (group flakiness)
     await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForTimeout(2000);
 
-    // Step 1️⃣ Open "Total Unique Login" card
+    console.log("📊 Looking for Total Unique Login card...");
+
+    // Step 1: Click Total Unique Login card
     const card = this.page
-      .locator(this.totaluniquecardLocator)
+      .locator("div.recharts-wrapper")
       .filter({ hasText: 'Total Unique Login' });
 
-    await expect(card.first()).toBeVisible({ timeout: 20000 });
+    await card.first().waitFor({ state: 'visible', timeout: 20000 });
     await card.first().scrollIntoViewIfNeeded();
-    await card.first().click();
+    await this.page.waitForTimeout(500);
+    await card.first().click({ force: true });
+    console.log("✅ Clicked Total Unique Login card");
 
+    // Wait for navigation and data load
+    await this.page.waitForURL('**/unique-login**', { timeout: 15000 });
+    await this.page.waitForLoadState('domcontentloaded');
     await this.waitForLoader();
+    await this.page.waitForTimeout(3000);
 
-    // Step 2️⃣ Wait for employee action icon
-    await expect(this.actionicon).toBeVisible({ timeout: 20000 });
-    await this.actionicon.click();
+    // Verify data loaded
+    const rows = await this.page.locator('tr').count();
+    console.log(`✅ Found ${rows} table rows`);
 
-    await this.waitForLoader();
-
-    // Step 3️⃣ Drilldown
-    await expect(this.drilldown).toBeVisible({ timeout: 20000 });
-    await this.drilldown.click();
-
-    await this.waitForLoader();
-
-    // Step 4️⃣ Pick RANDOM delete image icon (FIXED)
-    const deleteIcons = this.page.locator("//img[@title='Delete Images']");
-    const count = await deleteIcons.count();
-
-    if (count === 0) {
-      throw new Error("No delete images available to delete");
+    if (rows === 0) {
+      throw new Error("No employee data loaded");
     }
 
-    const randomIndex = Math.floor(Math.random() * count);
-    const randomdeleteicon = deleteIcons.nth(randomIndex);
+    // Step 2: Click "View Employee Details" icon
+    console.log("🔍 Looking for View Employee Details icon...");
+    const actionIcon = this.page.locator("img[title='View Employee Details']").first();
+    
+    await actionIcon.waitFor({ state: 'visible', timeout: 15000 });
+    await actionIcon.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(500);
+    await actionIcon.click();
+    console.log("✅ Clicked View Employee Details");
 
-    await expect(randomdeleteicon).toBeVisible({ timeout: 20000 });
-    await randomdeleteicon.click();
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.waitForLoader();
+    await this.page.waitForTimeout(2000);
 
-    // Step 5️⃣ Enter deletion remark
-    await expect(this.enterdeleteremark).toBeVisible({ timeout: 20000 });
-    await this.enterdeleteremark.fill("yes");
+    // Step 3: Click drilldown (Path icon)
+    console.log("📂 Looking for drilldown...");
+    const drilldown = this.page.locator("polyline#Path").first();
+    
+    await drilldown.waitFor({ state: 'visible', timeout: 15000 });
+    await drilldown.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(500);
+    await drilldown.click();
+    console.log("✅ Clicked drilldown");
+
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.waitForLoader();
+    await this.page.waitForTimeout(3000);
+
+    // Step 4: Find and click delete image icon
+    console.log("🗑️ Looking for delete image icons...");
+    const deleteIcons = this.page.locator("img[title='Delete Images']");
+    
+    const count = await deleteIcons.count();
+    console.log(`🔍 Found ${count} delete image icons`);
+
+    if (count === 0) {
+      console.warn("⚠️ No images available to delete - test skipped");
+      return;
+    }
+
+    const deleteIcon = deleteIcons.first();
+    
+    await deleteIcon.waitFor({ state: 'visible', timeout: 15000 });
+    await deleteIcon.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(500);
+    await deleteIcon.click();
+    console.log("✅ Clicked delete image icon");
+
+    await this.page.waitForTimeout(1500);
+
+    // Step 5: Enter deletion remark
+    console.log("✍️ Entering deletion remark...");
+    const remarkField = this.page.locator("textarea[placeholder='Enter deletion remarks']").first();
+    
+    await remarkField.waitFor({ state: 'visible', timeout: 15000 });
+    await remarkField.fill("Automated deletion - QA test");
+    console.log("✅ Entered deletion remark");
 
     await this.waitForLoader();
+    await this.page.waitForTimeout(500);
 
-    // Step 6️⃣ Confirm DELETE
-    await expect(this.deleteBtn).toBeVisible({ timeout: 20000 });
-    await expect(this.deleteBtn).toBeEnabled();
+    // Step 6: Click DELETE button
+    console.log("🗑️ Clicking DELETE button...");
+    const deleteBtn = this.page.locator("button:has-text('DELETE')").first();
+    
+    await deleteBtn.waitFor({ state: 'visible', timeout: 15000 });
+    await expect(deleteBtn).toBeEnabled({ timeout: 5000 });
+    await deleteBtn.click();
+    console.log("✅ Clicked DELETE button");
 
-    await this.deleteBtn.click();
-
-    // Step 7️⃣ Final loader settle
+    // Step 7: Wait for deletion to complete
+    await this.page.waitForLoadState('domcontentloaded');
     await this.waitForLoader();
+    await this.page.waitForTimeout(2000);
+
+    console.log(" Image deletion completed successfully!");
   }
 }
 

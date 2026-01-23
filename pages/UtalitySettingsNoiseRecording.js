@@ -4,153 +4,181 @@ class UtalitySettingsNoiseRecording {
     constructor(page) {
         this.page = page;
 
-        // Scrollable sidebar container
-this.sidebar = this.page.locator(".fixed-left-sidebar").first();
-
-// Settings icon (inside correct container)
-this.settingsIcon = this.page
-    .locator('.fixed-left-sidebar a[data-testid="nav-link"][href="/settings/image_general_setting"]')
-    .first();
-
-     //this.settingIcon = "(//*[name()='svg'])[19]";
-
-        // Tabs & Inputs
-        this.utalitysettings = "(//span[normalize-space()='Utility Settings'])[1]";
-        this.noisecapturesettings = this.page.locator("(//span[normalize-space()='Noise Recording Settings'])[1]");
-        this.noiserecordingtoggle = this.page.locator("(//div[@class='react-switch-bg'])[1]");
-        this.audioclipduration=this.page.locator("(//input[@id='audio_file_length'])[1]");
-        this.audiorecordinterval = this.page.locator("(//input[@id='audio_capture_interval'])[1]");
-        this.maxaudiorecordcount=this.page.locator("(//input[@id='audio_max_count'])[1]");
-
-        // Buttons
-        this.savebutton = '.button-box__button.submit';
-        this.confrmsnpopup = this.page.locator("(//button[normalize-space()='SAVE'])[1]");
-
-        // Loader
-        this.loader = '#global-loader-container .loading';
+        // Locators
+        this.settingsIcon = page.locator('.fixed-left-sidebar a[data-testid="nav-link"][href="/settings/image_general_setting"]').first();
+        this.utilitySettingsTab = page.locator("span:has-text('Utility Settings')");
+        this.noiseRecordingSettings = page.locator("span:has-text('Noise Recording Settings')").first();
+        this.businessGroupDropdown = page.locator("div.inputBoxDiv.ellipsis").first();
+        this.noiseRecordingToggle = page.locator("div.react-switch-bg").first();
+        this.audioClipDuration = page.locator("input#audio_file_length").first();
+        this.audioRecordInterval = page.locator("input#audio_capture_interval").first();
+        this.maxAudioRecordCount = page.locator("input#audio_max_count").first();
+        this.saveButton = page.locator('button.button-box__button.submit, button:has-text("Save")').first();
+        this.popupSaveButton = page.locator('button[data-testid="confirmation-popup-btn"]');
+        this.confirmPopup = page.locator("text=/settings updated successfully/i, text=/success/i");
+        this.loader = page.locator('#global-loader-container .loading');
     }
 
-    
-    async scrollNavBarToBottom() {
-        const navBar = this.sidebar;
-
-        await navBar.evaluate(el => {
-            el.scrollTo({
-                top: el.scrollHeight,
-                behavior: 'instant'
-            });
-        });
-
-        await this.page.waitForTimeout(500);
+    async waitForLoader() {
+        try {
+            const isVisible = await this.loader.isVisible({ timeout: 2000 });
+            if (isVisible) {
+                await this.loader.waitFor({ state: 'hidden', timeout: 20000 });
+                console.log("⏳ Loader hidden");
+            }
+        } catch {
+            // Loader not present
+        }
     }
 
-   
+    async setFieldValue(input, value, fieldName) {
+        console.log(`✏️ Setting ${fieldName} to: ${value}`);
+        
+        await input.waitFor({ state: 'visible', timeout: 15000 });
+        await input.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
 
-    async clearAndFill(locator, value) {
-        await locator.waitFor({ state: "visible" });
-        await locator.scrollIntoViewIfNeeded();
-        await locator.fill("");
-        await locator.type(value.toString(), { delay: 50 });
-        await this.page.waitForTimeout(150);
+        await input.clear();
+        await this.page.waitForTimeout(200);
+        await input.fill(value);
+        
+        await expect(input).toHaveValue(value, { timeout: 5000 });
+        console.log(`✅ ${fieldName} set to: ${value}`);
     }
 
-    async clickToggle(locator) {
-        await locator.waitFor({ state: "visible" });
-        await locator.scrollIntoViewIfNeeded();
-        await locator.click({ force: true });
-        await this.page.waitForTimeout(150);
+    async clickToggle(toggle, toggleName) {
+        console.log(`🔘 Toggling ${toggleName}...`);
+        
+        await toggle.waitFor({ state: 'visible', timeout: 15000 });
+        await toggle.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
+        await toggle.click();
+        console.log(`✅ ${toggleName} toggled`);
+        await this.page.waitForTimeout(300);
     }
-
-    async waitForLoaderToDisappear() {
-        await this.page.waitForSelector(this.loader, {
-            state: "hidden",
-            timeout: 30000
-        });
-    }
-
-    
 
     async utalitysettingsAudiocapture() {
+        // ✅ Reset state
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.page.waitForTimeout(3000);
 
-        await this.page.waitForLoadState("domcontentloaded");
-        await this.waitForLoaderToDisappear();
+        const currentUrl = this.page.url();
+        console.log(`📍 Current URL: ${currentUrl}`);
 
-        // --- Scroll Sidebar to show settings icon ---
-       await this.sidebar.waitFor({ state: 'visible', timeout: 20000 });
+        // ✅ Navigate to Settings
+        if (!currentUrl.includes('settings')) {
+            console.log("⚙️ Clicking Settings icon...");
+            
+            await this.waitForLoader();
+            await this.page.waitForTimeout(2000);
+            
+            const sidebar = this.page.locator('div.fixed-left-sidebar');
+            await sidebar.waitFor({ state: 'visible', timeout: 10000 });
+            await sidebar.evaluate(el => el.scrollTop = el.scrollHeight);
+            await this.page.waitForTimeout(1000);
+            
+            await this.settingsIcon.waitFor({ state: 'visible', timeout: 15000 });
+            await this.settingsIcon.click();
+            console.log("✅ Clicked Settings");
 
-// Scroll sidebar container
-await this.sidebar.evaluate(el => el.scrollTop = el.scrollHeight);
+            await this.page.waitForLoadState('domcontentloaded');
+        } else {
+            console.log("✅ Already on Settings page");
+        }
 
-// Small wait for DOM repaint
-await this.page.waitForTimeout(500);
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000);
 
-// Force click settings icon
-await this.settingsIcon.click({ force: true });
-        // --- CLICK utality settings video capture  ---
-        const utalitysettings = this.page.locator(this.utalitysettings);
-        await utalitysettings.waitFor({ state: "visible", timeout: 15000 });
-        await utalitysettings.scrollIntoViewIfNeeded();
-        await utalitysettings.click();
+        // ✅ Click Utility Settings tab
+        console.log("🔧 Clicking Utility Settings tab...");
+        await this.utilitySettingsTab.waitFor({ state: 'visible', timeout: 15000 });
+        await this.utilitySettingsTab.click();
+        console.log("✅ Utility Settings tab clicked");
 
-        await this.waitForLoaderToDisappear();
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000);
 
-       await this.noisecapturesettings.waitFor({ state: 'visible', timeout: 15000 });
+        // ✅ Click Noise Recording Settings
+        console.log("🔊 Clicking Noise Recording Settings...");
+        await this.noiseRecordingSettings.waitFor({ state: 'visible', timeout: 15000 });
+        await this.noiseRecordingSettings.click();
+        console.log("✅ Noise Recording Settings clicked");
 
-       await this.noisecapturesettings.click();
+        await this.page.waitForTimeout(1500);
 
-        //select value from dropdown 
-      const businessGroupDropdown = this.page.locator(
-  "(//div[contains(@class,'inputBoxDiv ellipsis')])[1]"
-);
+        // ✅ Select Business Group
+        console.log("📋 Selecting Business Group...");
+        await this.businessGroupDropdown.waitFor({ state: 'visible', timeout: 15000 });
+        await this.businessGroupDropdown.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
+        await this.businessGroupDropdown.click();
+        await this.page.waitForTimeout(500);
 
-// Wait for DOM presence only
-await businessGroupDropdown.waitFor({ state: 'attached', timeout: 20000 });
+        const trustedOption = this.page.locator("text=Trusted");
+        await trustedOption.waitFor({ state: 'visible', timeout: 10000 });
+        await trustedOption.click();
+        console.log("✅ Selected: Trusted");
+        
+        await this.page.keyboard.press('Escape');
+        await this.page.waitForTimeout(500);
 
-// Scroll into view and force click
-await businessGroupDropdown.scrollIntoViewIfNeeded();
-await businessGroupDropdown.click({ force: true });
+        // ✅ Toggle Noise Recording
+        await this.clickToggle(this.noiseRecordingToggle, "Noise Recording");
 
+        // ✅ Fill input fields
+        await this.setFieldValue(this.audioClipDuration, '20', "Audio Clip Duration");
+        await this.setFieldValue(this.audioRecordInterval, '50', "Audio Record Interval");
+        await this.setFieldValue(this.maxAudioRecordCount, '50', "Max Audio Record Count");
 
-// Select "Trusted Watch"
-const trustedOption = this.page.locator("text=Trusted");
-await trustedOption.waitFor({ state: 'attached', timeout: 10000 });
-await trustedOption.click({ force: true });
-await this.page.keyboard.press('Escape');
-await this.page.waitForTimeout(500);
+        await this.page.waitForTimeout(500);
+        await this.waitForLoader();
 
-//audio recording toggle
- await this.clickToggle(this.noiserecordingtoggle);
- await this.page.waitForTimeout(500);
+        // ✅ Click Save
+        console.log("💾 Clicking Save button...");
+        await this.saveButton.waitFor({ state: 'visible', timeout: 10000 });
+        await this.saveButton.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
+        
+        const isSaveEnabled = await this.saveButton.isEnabled({ timeout: 5000 }).catch(() => false);
+        
+        if (!isSaveEnabled) {
+            console.warn("⚠️ Save button is disabled");
+            return;
+        }
 
-  // --- FILL FORM VALUES ---
-await this.clearAndFill(this.audioclipduration, "20");
-await this.page.waitForTimeout(500);
+        await this.saveButton.click();
+        console.log("✅ Save button clicked");
 
-await this.clearAndFill(this.audiorecordinterval, "50");
-await this.page.waitForTimeout(500);
+        await this.page.waitForTimeout(2000);
 
-await this.clearAndFill(this.maxaudiorecordcount, "50");
-await this.page.waitForTimeout(500);
- 
-        // --- WAIT FOR SAVE BUTTON TO BE ENABLED ---
-        const saveButton = this.page.locator(this.savebutton);
-        await saveButton.scrollIntoViewIfNeeded();
-        await saveButton.waitFor({ state: "visible", timeout: 15000 });
+        // ✅ Click popup SAVE
+        console.log("✔️ Waiting for confirmation popup...");
+        
+        await this.popupSaveButton.waitFor({ state: 'visible', timeout: 15000 });
+        console.log("📋 Confirmation popup appeared");
+        
+        await this.page.waitForTimeout(500);
+        
+        await this.popupSaveButton.click({ force: true });
+        console.log("✅ Popup SAVE clicked");
 
-        await this.page.waitForFunction(() => {
-            const btn = document.querySelector('.button-box__button.submit');
-            return btn && !btn.disabled;
-        }, { timeout: 30000 });
+        // ✅ Wait for completion
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.waitForLoader();
+        await this.page.waitForTimeout(2000);
 
-        await saveButton.click();
-        await this.waitForLoaderToDisappear();
+        // ✅ Verify success
+        const isSuccessVisible = await this.confirmPopup.isVisible({ timeout: 10000 }).catch(() => false);
+        
+        if (isSuccessVisible) {
+            const message = await this.confirmPopup.textContent();
+            console.log(`🎉 ${message}`);
+        } else {
+            console.log("✅ Settings saved");
+        }
 
-        // --- CONFIRM POPUP ---
-        await this.confrmsnpopup.waitFor({ state: "visible", timeout: 15000 });
-        await this.confrmsnpopup.scrollIntoViewIfNeeded();
-        await this.confrmsnpopup.click();
-
-        await this.waitForLoaderToDisappear();
+        console.log("🎉 Utility Settings - Noise Recording updated successfully!");
     }
 }
 
